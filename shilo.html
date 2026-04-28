@@ -394,12 +394,13 @@
   /* ── Address ────────────────────────────────── */
   .tl-addr {
     display: flex; align-items: center; gap: 6px;
-    margin-top: 10px; padding: 8px 10px; border-radius: 8px;
+    margin-top: 10px; padding: 9px 10px; border-radius: 8px;
     background: rgba(255,255,255,0.03); border: 1px solid var(--border);
     flex-wrap: wrap;
   }
   .tl-addr-pin { color: var(--text-dim); flex-shrink: 0; }
-  .tl-addr-text { font-size: 11px; color: var(--text-sec); flex: 1; min-width: 140px; }
+  .tl-addr-text { font-size: 11px; color: var(--text-sec); flex: 1; min-width: 0; width: 100%; }
+  .map-btns { display: flex; gap: 5px; flex-wrap: nowrap; align-items: center; }
   .tl-addr-btn {
     padding: 3px 9px; border-radius: 6px; font-size: 10px; font-weight: 700; cursor: pointer;
     border: 1px solid var(--border); background: var(--glass); color: var(--text-sec);
@@ -554,15 +555,17 @@
           <div class="tl-addr">
             <svg class="tl-addr-pin" width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" fill="currentColor"/></svg>
             <span class="tl-addr-text">Bacon Bitch &mdash; Miami, FL (marina view)</span>
-            <a class="map-btn map-apple"  href="https://maps.apple.com/?q=Bacon+Bitch+Miami+FL" target="_blank">
-              <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Maps
-            </a>
-            <a class="map-btn map-google" href="https://maps.google.com/?q=Bacon+Bitch+Miami+FL" target="_blank">
-              <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Google
-            </a>
-            <a class="map-btn map-waze"   href="https://waze.com/ul?q=Bacon+Bitch+Miami+FL&navigate=yes" target="_blank">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="10" r="7" stroke="currentColor" stroke-width="2"/><path d="M9 10h.01M15 10h.01M9 13s1 2 3 2 3-2 3-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Waze
-            </a>
+            <div class="map-btns">
+              <a class="map-btn map-apple"  href="https://maps.apple.com/?q=Bacon+Bitch+Miami+FL" target="_blank">
+                <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Maps
+              </a>
+              <a class="map-btn map-google" href="https://maps.google.com/?q=Bacon+Bitch+Miami+FL" target="_blank">
+                <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Google
+              </a>
+              <a class="map-btn map-waze"   href="https://waze.com/ul?q=Bacon+Bitch+Miami+FL&navigate=yes" target="_blank">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="10" r="7" stroke="currentColor" stroke-width="2"/><path d="M9 10h.01M15 10h.01M9 13s1 2 3 2 3-2 3-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Waze
+              </a>
+            </div>
           </div>
           <div class="tl-badges">
             <span class="tl-badge badge-live">LIVE</span>
@@ -603,18 +606,20 @@
           <div class="tl-addr">
             <svg class="tl-addr-pin" width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" fill="currentColor"/></svg>
             <span class="tl-addr-text">1310 NE 1st Ave, Miami, FL 33132</span>
-            <button class="copy-btn" onclick="copyText(this,'1310 NE 1st Ave, Miami, FL 33132')">
-              <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2.5"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2.5"/></svg>Copy
-            </button>
-            <a class="map-btn map-apple"  href="https://maps.apple.com/?q=1310+NE+1st+Ave+Miami+FL+33132" target="_blank">
-              <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Maps
-            </a>
-            <a class="map-btn map-google" href="https://maps.google.com/?q=1310+NE+1st+Ave+Miami+FL+33132" target="_blank">
-              <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Google
-            </a>
-            <a class="map-btn map-waze"   href="https://waze.com/ul?q=1310+NE+1st+Ave+Miami+FL+33132&navigate=yes" target="_blank">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="10" r="7" stroke="currentColor" stroke-width="2"/><path d="M9 10h.01M15 10h.01M9 13s1 2 3 2 3-2 3-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Waze
-            </a>
+            <div class="map-btns">
+              <button class="copy-btn" onclick="copyText(this,'1310 NE 1st Ave, Miami, FL 33132')">
+                <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2.5"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2.5"/></svg>Copy
+              </button>
+              <a class="map-btn map-apple"  href="https://maps.apple.com/?q=1310+NE+1st+Ave+Miami+FL+33132" target="_blank">
+                <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Maps
+              </a>
+              <a class="map-btn map-google" href="https://maps.google.com/?q=1310+NE+1st+Ave+Miami+FL+33132" target="_blank">
+                <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Google
+              </a>
+              <a class="map-btn map-waze"   href="https://waze.com/ul?q=1310+NE+1st+Ave+Miami+FL+33132&navigate=yes" target="_blank">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="10" r="7" stroke="currentColor" stroke-width="2"/><path d="M9 10h.01M15 10h.01M9 13s1 2 3 2 3-2 3-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Waze
+              </a>
+            </div>
           </div>
           <div class="tl-badges">
             <span class="tl-badge badge-live">LIVE</span>
@@ -656,18 +661,20 @@
           <div class="tl-addr">
             <svg class="tl-addr-pin" width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" fill="currentColor"/></svg>
             <span class="tl-addr-text">3371 N University Dr, Hollywood, FL 33024</span>
-            <button class="copy-btn" onclick="copyText(this,'3371 N University Dr, Hollywood, FL 33024')">
-              <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2.5"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2.5"/></svg>Copy
-            </button>
-            <a class="map-btn map-apple"  href="https://maps.apple.com/?q=3371+N+University+Dr+Hollywood+FL+33024" target="_blank">
-              <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Maps
-            </a>
-            <a class="map-btn map-google" href="https://maps.google.com/?q=3371+N+University+Dr+Hollywood+FL+33024" target="_blank">
-              <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Google
-            </a>
-            <a class="map-btn map-waze"   href="https://waze.com/ul?q=3371+N+University+Dr+Hollywood+FL+33024&navigate=yes" target="_blank">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="10" r="7" stroke="currentColor" stroke-width="2"/><path d="M9 10h.01M15 10h.01M9 13s1 2 3 2 3-2 3-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Waze
-            </a>
+            <div class="map-btns">
+              <button class="copy-btn" onclick="copyText(this,'3371 N University Dr, Hollywood, FL 33024')">
+                <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2.5"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2.5"/></svg>Copy
+              </button>
+              <a class="map-btn map-apple"  href="https://maps.apple.com/?q=3371+N+University+Dr+Hollywood+FL+33024" target="_blank">
+                <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Maps
+              </a>
+              <a class="map-btn map-google" href="https://maps.google.com/?q=3371+N+University+Dr+Hollywood+FL+33024" target="_blank">
+                <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Google
+              </a>
+              <a class="map-btn map-waze"   href="https://waze.com/ul?q=3371+N+University+Dr+Hollywood+FL+33024&navigate=yes" target="_blank">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="10" r="7" stroke="currentColor" stroke-width="2"/><path d="M9 10h.01M15 10h.01M9 13s1 2 3 2 3-2 3-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Waze
+              </a>
+            </div>
           </div>
           <div class="tl-badges">
             <span class="tl-badge badge-live">LIVE</span>
