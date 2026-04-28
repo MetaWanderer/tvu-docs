@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TVU PACK — Shilo Sanders Shoot</title>
+<style>
+  :root {
+    --bg: #08090c;
+    --surface: #111318;
+    --surface-2: #181b22;
+    --border: #1e2130;
+    --glass: rgba(255,255,255,0.04);
+    --text: #f0f1f3;
+    --text-sec: #8b92a0;
+    --text-dim: #4a5060;
+    --shilo: #60a5fa;
+    --shilo-bg: rgba(96,165,250,0.08);
+    --shilo-border: rgba(96,165,250,0.25);
+    --shilo-glow: rgba(96,165,250,0.15);
+    --gym: #c084fc;
+    --gym-bg: rgba(192,132,252,0.08);
+    --gym-border: rgba(192,132,252,0.25);
+    --gym-glow: rgba(192,132,252,0.15);
+    --tennis: #34d399;
+    --tennis-bg: rgba(52,211,153,0.06);
+    --tennis-border: rgba(52,211,153,0.2);
+    --green: #70b858;
+    --green-bg: rgba(112,184,88,0.1);
+    --red: #f87171;
+    --red-bg: rgba(248,113,113,0.1);
+    --orange: #fb923c;
+    --orange-bg: rgba(251,146,60,0.08);
+    --yellow: #fbbf24;
+    --now-glow: rgba(112,184,88,0.2);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', sans-serif;
+    background: var(--bg); color: var(--text);
+    line-height: 1.5; -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  ::-webkit-scrollbar { width:4px; }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+  a { color: inherit; text-decoration: none; }
+
+  /* ── Sticky Nav ────────────────────────────── */
+  .nav {
+    position: fixed; top:0; left:0; right:0; z-index:100;
+    background: rgba(8,9,12,0.88);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex; align-items: center; justify-content: center;
+    gap: 4px; padding: 8px 12px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .nav-pill {
+    padding: 7px 14px; border-radius: 100px;
+    font-size: 11px; font-weight: 600; color: var(--text-dim);
+    cursor: pointer; transition: all 150ms; white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav-pill:hover, .nav-pill.active { color: var(--green); background: var(--green-bg); }
+
+  /* ── Hero ──────────────────────────────────── */
+  .hero {
+    min-height: 100vh; min-height: 100dvh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 80px 20px 40px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 40%, rgba(96,165,250,0.05) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 30% 60%, rgba(192,132,252,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 70% 60%, rgba(52,211,153,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.15em; color: var(--green);
+    margin-bottom: 8px; position: relative;
+  }
+  .hero-title {
+    font-size: clamp(28px, 8vw, 48px); font-weight: 900;
+    letter-spacing: -0.03em; line-height: 1.1;
+    margin-bottom: 6px; position: relative;
+  }
+  .hero-sub {
+    font-size: 14px; color: var(--text-sec);
+    margin-bottom: 32px; position: relative;
+  }
+
+  .countdown {
+    display: flex; gap: 10px; justify-content: center;
+    margin-bottom: 28px; position: relative;
+  }
+  .cd-block {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 12px 8px 10px;
+    min-width: 72px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .cd-num {
+    font-size: clamp(32px, 10vw, 56px);
+    font-weight: 900; line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em; color: var(--text);
+  }
+  .cd-label {
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.12em; color: var(--text-dim); margin-top: 6px;
+  }
+  .cd-live .cd-num { color: var(--red); }
+  .cd-live { border-color: rgba(248,113,113,0.3); background: var(--red-bg); }
+
+  .hero-now {
+    padding: 10px 20px; border-radius: 12px;
+    background: var(--surface); border: 1px solid var(--border);
+    font-size: 13px; color: var(--text-sec); position: relative;
+    max-width: 420px; width: 100%;
+  }
+  .hero-now strong { color: var(--text); }
+  .hero-now-label {
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 2px;
+  }
+
+  .hero-links {
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    margin-top: 20px; position: relative;
+  }
+  .hero-link {
+    padding: 8px 16px; border-radius: 10px;
+    font-size: 11px; font-weight: 600;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 150ms;
+  }
+  .hero-link.twitch { background: var(--gym-bg); border: 1px solid var(--gym-border); color: var(--gym); }
+  .hero-link.contact { background: var(--shilo-bg); border: 1px solid var(--shilo-border); color: var(--shilo); }
+  .hero-link.guest { background: var(--orange-bg); border: 1px solid rgba(251,146,60,0.2); color: var(--orange); }
+  .hero-link:hover { filter: brightness(1.2); transform: translateY(-1px); }
+
+  .hero-scroll {
+    position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+    color: var(--text-dim); font-size: 11px; font-weight: 600;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    animation: bobble 2s infinite;
+  }
+  @keyframes bobble { 0%,100%{transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(6px);} }
+
+  /* ── Section ───────────────────────────────── */
+  .section { padding: 48px 16px; max-width: 680px; margin: 0 auto; }
+  .sec-head { text-align: center; margin-bottom: 28px; }
+  .sec-num {
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.15em; color: var(--green); margin-bottom: 6px;
+  }
+  .sec-title { font-size: clamp(22px, 5vw, 30px); font-weight: 800; letter-spacing: -0.02em; }
+
+  /* ── Timeline ──────────────────────────────── */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .tl-block {
+    position: relative;
+    border-left: 3px solid var(--border);
+    margin-left: 20px;
+    padding: 0 0 0 24px;
+    padding-bottom: 4px;
+  }
+  .tl-time {
+    position: absolute; left: -24px; top: 0;
+    background: var(--bg); padding: 2px 0;
+    font-size: 11px; font-weight: 800; color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+    width: 44px; text-align: right;
+    transform: translateX(-100%);
+  }
+  .tl-dot {
+    position: absolute; left: -8px; top: 4px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--bg); border: 3px solid var(--border);
+    z-index: 2;
+  }
+  .tl-card {
+    border-radius: 14px; overflow: hidden;
+    margin-bottom: 12px; border: 1px solid var(--border);
+    transition: all 200ms;
+  }
+  .tl-card.shilo-card { background: var(--shilo-bg); border-color: var(--shilo-border); }
+  .tl-card.gym-card   { background: var(--gym-bg);   border-color: var(--gym-border); }
+  .tl-card.tennis-card{ background: var(--tennis-bg); border-color: var(--tennis-border); }
+  .tl-card.setup-card { background: var(--surface); }
+  .tl-card.drive-card { background: rgba(251,191,36,0.05); border-color: rgba(251,191,36,0.2); }
+
+  .tl-content { padding: 14px 16px; }
+
+  .tl-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 9px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.06em; margin-bottom: 4px;
+    padding: 3px 8px; border-radius: 6px;
+  }
+  .tl-tag.shilo-tag  { background: rgba(96,165,250,0.15);  color: var(--shilo); }
+  .tl-tag.gym-tag    { background: rgba(192,132,252,0.15); color: var(--gym); }
+  .tl-tag.tennis-tag { background: rgba(52,211,153,0.15);  color: var(--tennis); }
+  .tl-tag.setup-tag  { background: rgba(255,255,255,0.06); color: var(--text-dim); }
+  .tl-tag.drive-tag  { background: rgba(251,191,36,0.1);   color: var(--yellow); }
+
+  .tl-name  { font-size: 14px; font-weight: 700; margin-bottom: 2px; line-height: 1.3; }
+  .tl-desc  { font-size: 11px; color: var(--text-sec); line-height: 1.4; }
+  .tl-badges { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+  .tl-badge  { font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 100px; }
+  .badge-live {
+    background: var(--red-bg); color: var(--red);
+    border: 1px solid rgba(248,113,113,0.2);
+    display: flex; align-items: center; gap: 3px;
+  }
+  .badge-live::before {
+    content: ''; width:5px; height:5px; border-radius:50%; background: var(--red);
+  }
+  .badge-off { background: rgba(255,255,255,0.04); color: var(--text-dim); border: 1px solid var(--border); }
+  .badge-feat { background: rgba(251,191,36,0.08); color: var(--yellow); border: 1px solid rgba(251,191,36,0.2); }
+  .badge-tbd  { background: var(--orange-bg); color: var(--orange); border: 1px solid rgba(251,146,60,0.2); }
+
+  .tl-block.now .tl-dot { border-color: var(--green); box-shadow: 0 0 0 4px var(--now-glow); animation: glowPulse 2s infinite; }
+  .tl-block.now { border-left-color: var(--green); }
+  .tl-block.now .tl-time { color: var(--green); }
+  .tl-block.past { opacity: 0.35; }
+  .tl-block.past .tl-dot { border-color: var(--text-dim); background: var(--text-dim); }
+
+  .now-badge {
+    display: none; padding: 2px 8px; border-radius: 6px;
+    background: var(--green); color: white;
+    font-size: 9px; font-weight: 800; letter-spacing: 0.06em;
+  }
+  .tl-block.now .now-badge { display: inline-block; }
+
+  @keyframes glowPulse {
+    0%,100% { box-shadow: 0 0 0 4px var(--now-glow); }
+    50% { box-shadow: 0 0 0 8px rgba(112,184,88,0.08); }
+  }
+
+  /* ── Story Flow ────────────────────────────── */
+  .story-flow { display: flex; flex-direction: column; gap: 16px; counter-reset: story; }
+  .story-card {
+    border-radius: 16px; padding: 20px;
+    position: relative; counter-increment: story; overflow: hidden;
+  }
+  .story-card::before {
+    content: counter(story);
+    position: absolute; top: 16px; right: 16px;
+    font-size: 48px; font-weight: 900; line-height: 1; opacity: 0.06;
+  }
+  .story-card.s-shilo  { background: var(--shilo-bg);  border: 1px solid var(--shilo-border); }
+  .story-card.s-gym    { background: var(--gym-bg);    border: 1px solid var(--gym-border); }
+  .story-card.s-tennis { background: var(--tennis-bg); border: 1px solid var(--tennis-border); }
+  .story-card.s-drive  { background: rgba(251,191,36,0.05); border: 1px solid rgba(251,191,36,0.2); }
+
+  .story-who {
+    font-size: 9px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.1em; margin-bottom: 6px;
+  }
+  .s-shilo  .story-who { color: var(--shilo); }
+  .s-gym    .story-who { color: var(--gym); }
+  .s-tennis .story-who { color: var(--tennis); }
+  .s-drive  .story-who { color: var(--yellow); }
+
+  .story-name { font-size: 16px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.01em; line-height: 1.2; }
+  .story-bullets { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+  .story-bullets li {
+    font-size: 12px; color: var(--text-sec); padding-left: 12px;
+    position: relative; line-height: 1.4;
+  }
+  .story-bullets li::before { content: ''; position: absolute; left:0; top:6px; width:4px; height:4px; border-radius:50%; }
+  .s-shilo  .story-bullets li::before { background: var(--shilo); }
+  .s-gym    .story-bullets li::before { background: var(--gym); }
+  .s-tennis .story-bullets li::before { background: var(--tennis); }
+  .s-drive  .story-bullets li::before { background: var(--yellow); }
+
+  .story-goal { margin-top: 10px; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; }
+  .s-shilo  .story-goal { background: rgba(96,165,250,0.12);  color: var(--shilo); }
+  .s-gym    .story-goal { background: rgba(192,132,252,0.12); color: var(--gym); }
+  .s-tennis .story-goal { background: rgba(52,211,153,0.12);  color: var(--tennis); }
+  .s-drive  .story-goal { background: rgba(251,191,36,0.1);   color: var(--yellow); }
+
+  .story-connector { text-align: center; padding: 4px 0; color: var(--text-dim); }
+
+  /* ── Crew ──────────────────────────────────── */
+  .crew-stack { display: flex; flex-direction: column; gap: 12px; }
+  .crew-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 18px; border-radius: 14px;
+    background: var(--surface); border: 1px solid var(--border);
+  }
+  .crew-av {
+    width: 48px; height: 48px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 900; flex-shrink: 0;
+  }
+  .crew-info { flex: 1; }
+  .crew-name { font-size: 15px; font-weight: 800; }
+  .crew-role { font-size: 11px; color: var(--text-sec); }
+  .crew-gear-tag {
+    padding: 4px 10px; border-radius: 8px;
+    font-size: 10px; font-weight: 700;
+    background: var(--glass); border: 1px solid var(--border);
+    color: var(--text-dim); white-space: nowrap;
+  }
+
+  .key-point {
+    padding: 16px 18px; border-radius: 12px; margin-top: 20px;
+    text-align: center; font-size: 15px; font-weight: 800; line-height: 1.4;
+  }
+  .key-point.green-point { background: var(--green-bg); border: 1px solid rgba(112,184,88,0.2); color: var(--green); }
+  .key-point.red-point   { background: var(--red-bg);   border: 1px solid rgba(248,113,113,0.15); color: var(--red); }
+
+  .rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .rule-list { list-style: none; }
+  .rule-list h4 { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+  .rule-do h4   { color: var(--green); }
+  .rule-dont h4 { color: var(--red); }
+  .rule-list li { font-size: 11px; color: var(--text-sec); padding-left: 16px; position: relative; margin-bottom: 4px; line-height: 1.4; }
+  .rule-do   li::before { content:'\2713'; position:absolute; left:0; color:var(--green); font-weight:800; font-size:10px; }
+  .rule-dont li::before { content:'\2717'; position:absolute; left:0; color:var(--red);   font-weight:800; font-size:10px; }
+
+  /* ── Contact Card ──────────────────────────── */
+  .contact-card {
+    padding: 16px 18px; border-radius: 14px; margin-top: 16px;
+    background: var(--surface); border: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .contact-card h4 { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); }
+  .contact-row { display: flex; align-items: center; justify-content: space-between; }
+  .contact-name { font-size: 13px; font-weight: 700; }
+  .contact-num  { font-size: 12px; color: var(--text-sec); font-variant-numeric: tabular-nums; }
+
+  /* ── Camera ────────────────────────────────── */
+  .cam-card {
+    padding: 20px; border-radius: 14px;
+    background: var(--surface); border: 1px solid var(--border); margin-bottom: 12px;
+  }
+  .cam-card h3 { font-size: 14px; font-weight: 800; margin-bottom: 12px; }
+  .cam-specs   { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .cam-spec {
+    padding: 4px 10px; border-radius: 8px;
+    font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums;
+    background: var(--glass); border: 1px solid var(--border); color: var(--text-sec);
+  }
+  .cam-rules { list-style: none; }
+  .cam-rules li { font-size: 12px; color: var(--text-sec); padding: 4px 0; padding-left: 20px; position: relative; line-height: 1.4; }
+  .cam-rules li::before { content: ''; position: absolute; left: 0; top: 9px; width: 8px; height: 8px; border-radius: 2px; background: var(--green); opacity: 0.6; }
+  .cam-rules li strong { color: var(--text); }
+
+  /* ── Deliverables ──────────────────────────── */
+  .deliv-stack { display: flex; flex-direction: column; gap: 10px; }
+  .deliv-card {
+    padding: 18px; border-radius: 14px;
+    background: var(--surface); border: 1px solid var(--border);
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .deliv-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; }
+  .deliv-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+  .deliv-format  { font-size: 10px; color: var(--text-dim); margin-bottom: 6px; }
+  .deliv-card ul { list-style: none; }
+  .deliv-card li { font-size: 11px; color: var(--text-sec); padding-left: 12px; position: relative; margin-bottom: 2px; }
+  .deliv-card li::before { content:''; position:absolute; left:0; top:6px; width:4px; height:4px; border-radius:50%; background:var(--green); }
+
+  /* ── Info Card (stream + pack) ─────────────── */
+  .info-card {
+    padding: 16px 18px; border-radius: 14px; margin-bottom: 12px;
+    background: var(--surface); border: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .info-card h4 { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); }
+  .info-row { display: flex; align-items: center; gap: 7px; }
+  .info-row-label { font-size: 10px; font-weight: 700; color: var(--text-dim); white-space: nowrap; min-width: 84px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .info-row-val { font-size: 12px; color: var(--text-sec); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .info-row-val.pid { font-family: 'SF Mono','Fira Code',monospace; color: var(--yellow); font-size: 11px; }
+  .copy-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; cursor: pointer;
+    border: 1px solid var(--border); background: var(--glass); color: var(--text-sec);
+    white-space: nowrap; transition: color 0.15s, border-color 0.15s; flex-shrink: 0;
+  }
+  .copy-btn.copied { color: var(--green); border-color: var(--green); }
+  .contact-num a { color: inherit; text-decoration: none; }
+
+  /* ── Address ────────────────────────────────── */
+  .tl-addr {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 10px; padding: 8px 10px; border-radius: 8px;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .tl-addr-pin { color: var(--text-dim); flex-shrink: 0; }
+  .tl-addr-text { font-size: 11px; color: var(--text-sec); flex: 1; min-width: 140px; }
+  .tl-addr-btn {
+    padding: 3px 9px; border-radius: 6px; font-size: 10px; font-weight: 700; cursor: pointer;
+    border: 1px solid var(--border); background: var(--glass); color: var(--text-sec);
+    white-space: nowrap; transition: color 0.15s, border-color 0.15s;
+  }
+  .tl-addr-btn.copied { color: var(--green); border-color: var(--green); }
+  .map-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 9px; border-radius: 7px; font-size: 10px; font-weight: 700;
+    white-space: nowrap; text-decoration: none; border: 1px solid transparent;
+    cursor: pointer; transition: opacity 0.15s;
+  }
+  .map-btn:active { opacity: 0.7; }
+  .map-apple  { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.12); color: #e8e8e8; }
+  .map-google { background: rgba(66,133,244,0.12); border-color: rgba(66,133,244,0.3);  color: #6fa8f5; }
+  .map-waze   { background: rgba(0,210,165,0.10);  border-color: rgba(0,210,165,0.3);   color: #00d2a5; }
+
+  /* ── Hero info strip (PID + stream) ─────────── */
+  .hero-strip {
+    display: flex; align-items: stretch; justify-content: center;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden; max-width: 420px; width: 100%; margin-top: 16px;
+  }
+  .hero-strip-item { display: flex; align-items: center; gap: 8px; padding: 11px 14px; flex: 1; min-width: 0; }
+  .hero-strip-sep  { width: 1px; background: var(--border); flex-shrink: 0; align-self: stretch; }
+  .hero-strip-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); white-space: nowrap; }
+  .hero-strip-val   { font-size: 11px; font-family: 'SF Mono','Fira Code',monospace; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ── Footer ────────────────────────────────── */
+  footer { padding: 32px 16px; text-align: center; font-size: 11px; color: var(--text-dim); border-top: 1px solid var(--border); }
+  footer strong { color: var(--green); }
+
+  .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 0 16px; }
+
+  @media (max-width: 500px) {
+    .rules-grid { grid-template-columns: 1fr; }
+    .cd-block { min-width: 60px; padding: 10px 6px 8px; }
+    .contact-row { flex-direction: column; align-items: flex-start; gap: 2px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Nav ────────────────────────────────── -->
+<nav class="nav">
+  <a class="nav-pill active" onclick="go('hero')">Countdown</a>
+  <a class="nav-pill" onclick="go('schedule')">Schedule</a>
+  <a class="nav-pill" onclick="go('segments')">Segments</a>
+  <a class="nav-pill" onclick="go('crew')">Crew</a>
+  <a class="nav-pill" onclick="go('camera')">Camera</a>
+  <a class="nav-pill" onclick="go('deliverables')">Deliverables</a>
+</nav>
+
+<!-- ── Hero ───────────────────────────────── -->
+<section class="hero" id="hero">
+  <div class="hero-label">TVU PACK &mdash; MIAMI IRL</div>
+  <h1 class="hero-title">Shilo Sanders Shoot</h1>
+  <p class="hero-sub">Miami, FL &middot; Thursday, April 30</p>
+
+  <div class="countdown" id="countdown">
+    <div class="cd-block" id="cdH"><div class="cd-num" id="cdHVal">--</div><div class="cd-label">Hours</div></div>
+    <div class="cd-block" id="cdM"><div class="cd-num" id="cdMVal">--</div><div class="cd-label">Minutes</div></div>
+    <div class="cd-block" id="cdS"><div class="cd-num" id="cdSVal">--</div><div class="cd-label">Seconds</div></div>
+  </div>
+
+  <div class="hero-now" id="heroNow">
+    <div class="hero-now-label">CURRENT STATUS</div>
+    <div id="heroNowText"><strong>Pre-Production</strong> &mdash; Crew call at 10:30 AM ET</div>
+  </div>
+
+  <div class="hero-links">
+    <a class="hero-link twitch" href="https://www.twitch.tv/shilosanders" target="_blank">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M21 2H3v16h5v4l4-4h5l4-4V2z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Shilo &mdash; Twitch
+    </a>
+    <a class="hero-link guest" href="https://www.instagram.com/joeyjoy" target="_blank">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" stroke-width="2.5"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+      JoeyJoy &mdash; Guest
+    </a>
+    <a class="hero-link contact" href="tel:7199673071">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.4 11.37a19.79 19.79 0 01-3.07-8.67A2 2 0 012.3 2h3a2 2 0 012 1.72c.13 1 .38 1.98.74 2.91a2 2 0 01-.45 2.11L6.09 9.91a16 16 0 006 6l1.17-1.17a2 2 0 012.11-.45c.93.36 1.91.61 2.91.74A2 2 0 0122 16.92z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Dominick &mdash; POC
+    </a>
+    <a class="hero-link contact" href="tel:7204851721">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.4 11.37a19.79 19.79 0 01-3.07-8.67A2 2 0 012.3 2h3a2 2 0 012 1.72c.13 1 .38 1.98.74 2.91a2 2 0 01-.45 2.11L6.09 9.91a16 16 0 006 6l1.17-1.17a2 2 0 012.11-.45c.93.36 1.91.61 2.91.74A2 2 0 0122 16.92z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Shilo &mdash; Direct
+    </a>
+  </div>
+
+  <div class="hero-strip">
+    <div class="hero-strip-item">
+      <span class="hero-strip-label">Pack PID</span>
+      <span class="hero-strip-val" id="packPid" style="color:var(--yellow);">C6B13F6BFB7FF216</span>
+      <button class="copy-btn" style="flex-shrink:0;" onclick="copyText(this,'C6B13F6BFB7FF216')">
+        <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2.5"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2.5"/></svg>
+        Copy
+      </button>
+    </div>
+    <div class="hero-strip-sep"></div>
+    <div class="hero-strip-item">
+      <span class="hero-strip-label">Stream</span>
+      <span class="hero-strip-val" style="color:var(--shilo);">twitch.tv/shilosanders</span>
+      <button class="copy-btn" style="flex-shrink:0;" onclick="copyText(this,'https://www.twitch.tv/shilosanders')">
+        <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2.5"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2.5"/></svg>
+        Copy
+      </button>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Scroll for schedule
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Schedule ───────────────────────────── -->
+<section class="section" id="schedule">
+  <div class="sec-head">
+    <div class="sec-num">Schedule</div>
+    <div class="sec-title">Shoot Day Timeline</div>
+  </div>
+
+  <div class="timeline">
+
+    <!-- 10:30 Crew Call -->
+    <div class="tl-block" data-start="10:30" data-end="11:00">
+      <div class="tl-time">10:30</div>
+      <div class="tl-dot"></div>
+      <div class="tl-card setup-card">
+        <div class="tl-content">
+          <span class="now-badge">NOW</span>
+          <span class="tl-tag setup-tag">CREW CALL</span>
+          <div class="tl-name">Tech Check &amp; Setup</div>
+          <div class="tl-desc">Put the pack in Shilo's hands. Walk through setup. Show him TVU GO mobile as a backup — impromptu live option when he doesn't have his full rig.</div>
+          <div class="tl-badges"><span class="tl-badge badge-tbd">Maybe Stream</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11:00 Bacon Bitch -->
+    <div class="tl-block" data-start="11:00" data-end="11:30">
+      <div class="tl-time">11:00</div>
+      <div class="tl-dot"></div>
+      <div class="tl-card shilo-card">
+        <div class="tl-content">
+          <span class="now-badge">NOW</span>
+          <span class="tl-tag shilo-tag">SEGMENT 1 &mdash; BACON BITCH</span>
+          <div class="tl-name">Brunch &mdash; Bring Your Chat Along</div>
+          <div class="tl-desc">Sit-down brunch. Shilo talks to the stream, answers questions, reviews the food. Marina view — boats, water, Miami skyline as live backdrop. Chat votes on what he orders.</div>
+          <div class="tl-addr">
+            <svg class="tl-addr-pin" width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" fill="currentColor"/></svg>
+            <span class="tl-addr-text">Bacon Bitch &mdash; Miami, FL (marina view)</span>
+            <a class="map-btn map-apple"  href="https://maps.apple.com/?q=Bacon+Bitch+Miami+FL" target="_blank">
+              <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Maps
+            </a>
+            <a class="map-btn map-google" href="https://maps.google.com/?q=Bacon+Bitch+Miami+FL" target="_blank">
+              <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Google
+            </a>
+            <a class="map-btn map-waze"   href="https://waze.com/ul?q=Bacon+Bitch+Miami+FL&navigate=yes" target="_blank">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="10" r="7" stroke="currentColor" stroke-width="2"/><path d="M9 10h.01M15 10h.01M9 13s1 2 3 2 3-2 3-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Waze
+            </a>
+          </div>
+          <div class="tl-badges">
+            <span class="tl-badge badge-live">LIVE</span>
+            <span class="tl-badge badge-feat">45–60 min</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11:30 Drive to Gym -->
+    <div class="tl-block" data-start="11:30" data-end="11:45">
+      <div class="tl-time">11:30</div>
+      <div class="tl-dot"></div>
+      <div class="tl-card drive-card">
+        <div class="tl-content">
+          <span class="now-badge">NOW</span>
+          <span class="tl-tag drive-tag">SEGMENT 1B &mdash; DRIVE</span>
+          <div class="tl-name">Bacon Bitch &rarr; BOXR Gym &mdash; 10 min</div>
+          <div class="tl-desc">Stream stays on — your stream doesn't stop because you change locations. Shilo streaming in car, interactions on the move. <strong style="color:var(--yellow);">Hot-swappable battery demo on camera</strong> — Shilo keeps streaming without stopping, do a seamless swap to showcase this.</div>
+          <div class="tl-badges">
+            <span class="tl-badge badge-live">LIVE</span>
+            <span class="tl-badge badge-feat">Battery Swap</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11:45 BOXR Gym -->
+    <div class="tl-block" data-start="11:45" data-end="13:15">
+      <div class="tl-time">11:45</div>
+      <div class="tl-dot"></div>
+      <div class="tl-card gym-card">
+        <div class="tl-content">
+          <span class="now-badge">NOW</span>
+          <span class="tl-tag gym-tag">SEGMENT 2 &mdash; BOXR GYM</span>
+          <div class="tl-name">IRL From Anywhere &mdash; Shilo's Workout</div>
+          <div class="tl-desc">Boxing, weights, or class. Neon lights, murals of sporting greats, Lamborghini Aventador SVJ inside. Chat votes on next workout. Stream stays clean despite music + crowd. Toolkit integration — "works with your existing stack."</div>
+          <div class="tl-addr">
+            <svg class="tl-addr-pin" width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" fill="currentColor"/></svg>
+            <span class="tl-addr-text">1310 NE 1st Ave, Miami, FL 33132</span>
+            <button class="copy-btn" onclick="copyText(this,'1310 NE 1st Ave, Miami, FL 33132')">
+              <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2.5"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2.5"/></svg>Copy
+            </button>
+            <a class="map-btn map-apple"  href="https://maps.apple.com/?q=1310+NE+1st+Ave+Miami+FL+33132" target="_blank">
+              <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Maps
+            </a>
+            <a class="map-btn map-google" href="https://maps.google.com/?q=1310+NE+1st+Ave+Miami+FL+33132" target="_blank">
+              <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Google
+            </a>
+            <a class="map-btn map-waze"   href="https://waze.com/ul?q=1310+NE+1st+Ave+Miami+FL+33132&navigate=yes" target="_blank">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="10" r="7" stroke="currentColor" stroke-width="2"/><path d="M9 10h.01M15 10h.01M9 13s1 2 3 2 3-2 3-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Waze
+            </a>
+          </div>
+          <div class="tl-badges">
+            <span class="tl-badge badge-live">LIVE</span>
+            <span class="tl-badge badge-feat">45–75 min</span>
+            <span class="tl-badge badge-feat">Toolkit Demo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1:15 Drive to TT -->
+    <div class="tl-block" data-start="13:15" data-end="14:00">
+      <div class="tl-time">1:15</div>
+      <div class="tl-dot"></div>
+      <div class="tl-card drive-card">
+        <div class="tl-content">
+          <span class="now-badge">NOW</span>
+          <span class="tl-tag drive-tag">SEGMENT 2B &mdash; DRIVE</span>
+          <div class="tl-name">BOXR Gym &rarr; Broward Table Tennis &mdash; 40 min</div>
+          <div class="tl-desc">Longer drive — lean into chat interaction. Stream stays on. No stopping, no dead air. Connectivity reliable on the go.</div>
+          <div class="tl-badges">
+            <span class="tl-badge badge-live">LIVE</span>
+            <span class="tl-badge badge-feat">40 min</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2:00 Table Tennis -->
+    <div class="tl-block" data-start="14:00" data-end="15:30">
+      <div class="tl-time">2:00</div>
+      <div class="tl-dot"></div>
+      <div class="tl-card tennis-card">
+        <div class="tl-content">
+          <span class="now-badge">NOW</span>
+          <span class="tl-tag tennis-tag">SEGMENT 3 &mdash; TABLE TENNIS</span>
+          <div class="tl-name">Broward Table Tennis Club &mdash; The Bulk of the Day</div>
+          <div class="tl-desc">Shilo's passion for TT — challenge a club regular, talk trash, chat predicts outcomes. React on stream to old footage of him playing as a kid. Possible second feed via GO for both sides of the table. Bring in a surprise guest.</div>
+          <div class="tl-addr">
+            <svg class="tl-addr-pin" width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" fill="currentColor"/></svg>
+            <span class="tl-addr-text">3371 N University Dr, Hollywood, FL 33024</span>
+            <button class="copy-btn" onclick="copyText(this,'3371 N University Dr, Hollywood, FL 33024')">
+              <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2.5"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2.5"/></svg>Copy
+            </button>
+            <a class="map-btn map-apple"  href="https://maps.apple.com/?q=3371+N+University+Dr+Hollywood+FL+33024" target="_blank">
+              <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Maps
+            </a>
+            <a class="map-btn map-google" href="https://maps.google.com/?q=3371+N+University+Dr+Hollywood+FL+33024" target="_blank">
+              <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="2"/></svg>Google
+            </a>
+            <a class="map-btn map-waze"   href="https://waze.com/ul?q=3371+N+University+Dr+Hollywood+FL+33024&navigate=yes" target="_blank">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="10" r="7" stroke="currentColor" stroke-width="2"/><path d="M9 10h.01M15 10h.01M9 13s1 2 3 2 3-2 3-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Waze
+            </a>
+          </div>
+          <div class="tl-badges">
+            <span class="tl-badge badge-live">LIVE</span>
+            <span class="tl-badge badge-feat">90 min</span>
+            <span class="tl-badge badge-feat">Reaction Content</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3:30 Pickups -->
+    <div class="tl-block" data-start="15:30" data-end="17:00">
+      <div class="tl-time">3:30</div>
+      <div class="tl-dot"></div>
+      <div class="tl-card setup-card">
+        <div class="tl-content">
+          <span class="now-badge">NOW</span>
+          <span class="tl-tag setup-tag">WRAP</span>
+          <div class="tl-name">Off-Stream Pickups &amp; Miami B-Roll</div>
+          <div class="tl-desc">Additional Miami b-roll, gear shots, neighborhood art, candid moments. Any pickup interviews if needed.</div>
+          <div class="tl-badges"><span class="tl-badge badge-off">Off Stream</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Segments ────────────────────────────── -->
+<section class="section" id="segments">
+  <div class="sec-head">
+    <div class="sec-num">Story Flow</div>
+    <div class="sec-title">The Day's Narrative</div>
+  </div>
+
+  <div class="key-point red-point" style="margin-bottom:20px; font-size:13px;">
+    Athlete creator case study. Creator-first. The stream comes first, we capture the story.
+  </div>
+
+  <div class="story-flow">
+
+    <!-- Seg 1 -->
+    <div class="story-card s-shilo">
+      <div class="story-who">Segment 1 &mdash; Bacon Bitch</div>
+      <div class="story-name">Bring Your Chat Along</div>
+      <ul class="story-bullets">
+        <li>Sit-down brunch — Shilo talks to stream, answers questions, reflects</li>
+        <li>Food review — chat weighs in on what he orders</li>
+        <li>Marina view — boats, water, Miami skyline as live backdrop</li>
+        <li>Enable chat to feel part of the experience</li>
+      </ul>
+      <div class="story-goal">Make the audience feel like they're at the table with him</div>
+    </div>
+
+    <div class="story-connector">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <!-- Drive 1B -->
+    <div class="story-card s-drive">
+      <div class="story-who">Segment 1B &mdash; Drive (10 min)</div>
+      <div class="story-name">Flexibility — Stream Never Stops</div>
+      <ul class="story-bullets">
+        <li>Shilo streaming in car — pull from stream</li>
+        <li>Hot-swappable battery on camera — seamless swap, no interruption</li>
+        <li>Connectivity reliable even on the move</li>
+      </ul>
+      <div class="story-goal">Show the pack keeps you live between locations</div>
+    </div>
+
+    <div class="story-connector">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <!-- Seg 2 -->
+    <div class="story-card s-gym">
+      <div class="story-who">Segment 2 &mdash; BOXR Gym</div>
+      <div class="story-name">IRL From Anywhere</div>
+      <ul class="story-bullets">
+        <li>Shilo's real training routine — boxing, weights, or class</li>
+        <li>Reinforces athlete identity outside of football</li>
+        <li>Neon lights, murals, Lamborghini SVJ inside — high-energy Miami luxury aesthetic</li>
+        <li>Chat votes on next workout in real time</li>
+        <li>Stream stays clean despite music and crowd noise</li>
+        <li>Toolkit integration — "works with your existing stack"</li>
+      </ul>
+      <div class="story-goal">Show TVU enables Shilo to share his day from anywhere — even a premium gym</div>
+    </div>
+
+    <div class="story-connector">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <!-- Drive 2B -->
+    <div class="story-card s-drive">
+      <div class="story-who">Segment 2B &mdash; Drive (40 min)</div>
+      <div class="story-name">Long Ride — Deep Chat Interaction</div>
+      <ul class="story-bullets">
+        <li>Longer drive — lean into chat, Q&amp;A, conversation</li>
+        <li>Stream stays on for the full 40 min</li>
+        <li>Proof: connectivity holds across distance</li>
+      </ul>
+      <div class="story-goal">Prove the pack works city to city, not just block to block</div>
+    </div>
+
+    <div class="story-connector">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <!-- Seg 3 -->
+    <div class="story-card s-tennis">
+      <div class="story-who">Segment 3 &mdash; Broward Table Tennis Club</div>
+      <div class="story-name">Shilo Beyond the Brand</div>
+      <ul class="story-bullets">
+        <li>Lean into the competitive side — challenge a club regular, talk trash</li>
+        <li>Chat predicts outcomes, votes on matchups</li>
+        <li>Bring in a surprise guest to play</li>
+        <li>React on stream to old footage of him playing as a kid</li>
+        <li>Second camera angle via GO — capture both sides of the table</li>
+      </ul>
+      <div class="story-goal">Show the side of Shilo his audience doesn't see — IRL lets you share who you are beyond what you're known for</div>
+    </div>
+
+    <div class="story-connector">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <!-- Wrap -->
+    <div class="story-card" style="background:var(--surface);border:1px solid var(--border);">
+      <div class="story-who" style="color:var(--text-dim);">Wrap</div>
+      <div class="story-name">Off-Stream Pickups</div>
+      <ul class="story-bullets">
+        <li style="color:var(--text-sec);">Miami b-roll, gear shots, neighborhood art</li>
+        <li style="color:var(--text-sec);">Photo stills from each location</li>
+        <li style="color:var(--text-sec);">Candid moments + any pickup interviews</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Crew ───────────────────────────────── -->
+<section class="section" id="crew">
+  <div class="sec-head">
+    <div class="sec-num">Production</div>
+    <div class="sec-title">Crew &amp; Rules</div>
+  </div>
+
+  <div class="crew-stack">
+    <div class="crew-row">
+      <div class="crew-av" style="background:var(--green-bg);color:var(--green);">S</div>
+      <div class="crew-info">
+        <div class="crew-name">Socrates</div>
+        <div class="crew-role">Technical Production &middot; Director</div>
+      </div>
+    </div>
+    <div class="crew-row">
+      <div class="crew-av" style="background:var(--gym-bg);color:var(--gym);">D</div>
+      <div class="crew-info">
+        <div class="crew-name">Drew</div>
+        <div class="crew-role">Cinematic Camera Op</div>
+      </div>
+      <span class="crew-gear-tag">Sony FX3 · S-Log3</span>
+    </div>
+    <div class="crew-row">
+      <div class="crew-av" style="background:var(--shilo-bg);color:var(--shilo);">J</div>
+      <div class="crew-info">
+        <div class="crew-name">Jessica</div>
+        <div class="crew-role">Field Production</div>
+      </div>
+    </div>
+    <div class="crew-row">
+      <div class="crew-av" style="background:var(--tennis-bg);color:var(--tennis);">SS</div>
+      <div class="crew-info">
+        <div class="crew-name">Shilo Sanders</div>
+        <div class="crew-role">Talent — Controls His Own Stream</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="contact-card">
+    <h4>Day-Of Contacts</h4>
+    <div class="contact-row">
+      <span class="contact-name">Dominick <span style="color:var(--text-dim);font-weight:400;">(Shilo's Team — Main POC)</span></span>
+      <span style="display:flex;align-items:center;gap:6px;">
+        <a class="contact-num" href="tel:7199673071">719.967.3071</a>
+        <button class="copy-btn" onclick="copyText(this,'7199673071')">
+          <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2.5"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2.5"/></svg>
+          Copy
+        </button>
+      </span>
+    </div>
+    <div class="contact-row">
+      <span class="contact-name">Shilo Sanders</span>
+      <span style="display:flex;align-items:center;gap:6px;">
+        <a class="contact-num" href="tel:7204851721">720.485.1721</a>
+        <button class="copy-btn" onclick="copyText(this,'7204851721')">
+          <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2.5"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2.5"/></svg>
+          Copy
+        </button>
+      </span>
+    </div>
+  </div>
+
+  <div class="key-point green-point">
+    They control the stream. We capture the story.
+  </div>
+
+  <div class="rules-grid">
+    <div class="rule-list rule-do">
+      <h4>We Will</h4>
+      <ul>
+        <li>Capture BTS + cinematic angles + stream POV</li>
+        <li>Frame with vertical in mind</li>
+        <li>Stay out of the way unless needed</li>
+      </ul>
+    </div>
+    <div class="rule-list rule-dont">
+      <h4>We Will Not</h4>
+      <ul>
+        <li>Interrupt streams unnecessarily</li>
+        <li>Script lines</li>
+        <li>Over-direct</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Camera ─────────────────────────────── -->
+<section class="section" id="camera">
+  <div class="sec-head">
+    <div class="sec-num">Camera</div>
+    <div class="sec-title">Style &amp; Settings</div>
+  </div>
+
+  <div class="cam-card">
+    <h3>Drew &mdash; Sony FX3</h3>
+    <div class="cam-specs">
+      <span class="cam-spec">4K 23.98fps</span>
+      <span class="cam-spec">10-bit 4:2:2</span>
+      <span class="cam-spec">S-Gamut3.Cine / S-Log3</span>
+      <span class="cam-spec">f/2.8 &ndash; 4</span>
+      <span class="cam-spec">1/48 shutter</span>
+      <span class="cam-spec">ISO 800 or 12,800</span>
+      <span class="cam-spec">24-70mm + ND</span>
+    </div>
+    <ul class="cam-rules">
+      <li><strong>Expose with DisplayLUT + histogram</strong> &mdash; 1.3&ndash;2.0 stops over</li>
+      <li><strong>Base ISOs only</strong> &mdash; 800 outdoor, 12,800 low light (gym/restaurant)</li>
+      <li><strong>Mic talent before streaming</strong> &mdash; clean in-camera audio all day</li>
+    </ul>
+  </div>
+
+  <div class="cam-card">
+    <h3>Shooting Approach</h3>
+    <ul class="cam-rules">
+      <li><strong>Moments first</strong> &mdash; stay ready, let things happen naturally</li>
+      <li><strong>Shoot for the edit</strong> &mdash; wides, mediums, close-ups. Hold each shot 10+ sec</li>
+      <li><strong>Action + reaction</strong> &mdash; talent doing = main shot, what they see = cutaway</li>
+      <li><strong>Frame for vertical</strong> &mdash; center subjects for 9:16 crop-ability</li>
+      <li><strong>Capture stream POV</strong> &mdash; phone screens, chat reactions, TVU pack UI, pack setup</li>
+      <li><strong>Gym specifics</strong> &mdash; murals, car, neon lights, equipment. Shoot the vibe.</li>
+      <li><strong>Table tennis</strong> &mdash; both sides of the table if second angle available via GO</li>
+      <li><strong>Drive segments</strong> &mdash; pull from the stream + get window reflections, speed, city blur</li>
+    </ul>
+  </div>
+
+  <div class="cam-card">
+    <h3>Slow Motion</h3>
+    <ul class="cam-rules">
+      <li>S&amp;Q mode at <strong>120fps</strong>, shutter <strong>1/250</strong></li>
+      <li>Table tennis volleys, boxing combos, gear shots, Miami environment</li>
+      <li>Only when comfortable &mdash; don't miss the moment chasing slow-mo</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Deliverables ───────────────────────── -->
+<section class="section" id="deliverables">
+  <div class="sec-head">
+    <div class="sec-num">Deliverables</div>
+    <div class="sec-title">What Comes Out</div>
+  </div>
+
+  <div class="deliv-stack">
+    <div class="deliv-card">
+      <div class="deliv-icon" style="background:var(--gym-bg);color:var(--gym);">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <h3>Longform (16:9)</h3>
+        <div class="deliv-format">YouTube / Website</div>
+        <ul>
+          <li>5 min mini-episode &mdash; &ldquo;IRL Streaming with Shilo Sanders&rdquo;</li>
+        </ul>
+      </div>
+    </div>
+    <div class="deliv-card">
+      <div class="deliv-icon" style="background:var(--shilo-bg);color:var(--shilo);">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke="currentColor" stroke-width="2"/><path d="M12 18h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <h3>Vertical (9:16)</h3>
+        <div class="deliv-format">TikTok / Reels / Shorts</div>
+        <ul>
+          <li>3–4 clips (max 1 min each)</li>
+          <li>Going Live with TVU &mdash; setup, ease of use, battery swap</li>
+          <li>Flexibility &mdash; gym, restaurant, car, long distance, you stay live</li>
+          <li>Share Your Passion &mdash; athlete by trade, TT by passion, chat integration</li>
+          <li>Shilo's introduction to TVU Pack + second feed at table tennis via GO</li>
+        </ul>
+      </div>
+    </div>
+    <div class="deliv-card">
+      <div class="deliv-icon" style="background:var(--tennis-bg);color:var(--tennis);">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2"/></svg>
+      </div>
+      <div>
+        <h3>Behind the Scenes</h3>
+        <div class="deliv-format">Social / Internal</div>
+        <ul>
+          <li>Photo stills from each location</li>
+          <li>Gear setup shots</li>
+          <li>Gym shots &mdash; murals, car, neon, equipment</li>
+          <li>Neighborhood art around Bacon Bitch</li>
+          <li>Table tennis close-ups, competitive moments</li>
+          <li>Miami in general &mdash; city, water, energy</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:11px;color:var(--text-dim);margin-top:12px;text-align:center;">Content works for both TVU and Shilo's channels.</p>
+</section>
+
+<footer>
+  <strong>TVU Networks</strong> &middot; TVU Pack &middot; Shilo Sanders Shoot &middot; Miami, FL
+</footer>
+
+<script>
+function copyText(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 1800);
+  });
+}
+function copyAddr(btn, addr) { copyText(btn, addr); }
+
+// ── UPDATE THIS when shoot date is confirmed ──────────────
+// Shoot times in ET (EDT = UTC-4 in May/June)
+// Example below: May 14, 2026 — replace month (4=May), day (14), and UTC offset (+4 for EDT)
+const ET_OFFSET = 4; // EDT = UTC-4, so add 4 to convert ET→UTC
+const SHOOT_DATE = [2026, 3, 30]; // April 30, 2026 — Thursday
+const SHOOT_START = Date.UTC(SHOOT_DATE[0], SHOOT_DATE[1], SHOOT_DATE[2], 10 + ET_OFFSET, 30, 0); // 10:30 AM ET
+const SHOOT_END   = Date.UTC(SHOOT_DATE[0], SHOOT_DATE[1], SHOOT_DATE[2], 17 + ET_OFFSET,  0, 0); // 5:00 PM ET
+
+const SCHEDULE = [
+  { start: 10.5,  end: 11,    label: 'Crew Call + Tech Check — Put GO in Shilo\'s hands' },
+  { start: 11,    end: 11.5,  label: 'Segment 1 — Bacon Bitch: Brunch live stream' },
+  { start: 11.5,  end: 11.75, label: 'Segment 1B — Drive to BOXR Gym (battery swap)' },
+  { start: 11.75, end: 13.25, label: 'Segment 2 — BOXR Gym: Shilo\'s workout live' },
+  { start: 13.25, end: 14,    label: 'Segment 2B — Drive to Broward Table Tennis (40 min)' },
+  { start: 14,    end: 15.5,  label: 'Segment 3 — Broward Table Tennis Club' },
+  { start: 15.5,  end: 17,    label: 'Off-stream pickups + Miami b-roll' },
+];
+
+function etHourToUTC(h) {
+  return Date.UTC(SHOOT_DATE[0], SHOOT_DATE[1], SHOOT_DATE[2], Math.floor(h) + ET_OFFSET, (h % 1) * 60, 0);
+}
+
+function updateCountdown() {
+  const now = Date.now();
+  const diff = SHOOT_START - now;
+  const hEl = document.getElementById('cdHVal');
+  const mEl = document.getElementById('cdMVal');
+  const sEl = document.getElementById('cdSVal');
+  const hBlock = document.getElementById('cdH');
+  const mBlock = document.getElementById('cdM');
+  const sBlock = document.getElementById('cdS');
+
+  if (now >= SHOOT_START && now <= SHOOT_END) {
+    hEl.textContent = 'L'; mEl.textContent = 'I'; sEl.textContent = 'VE';
+    hBlock.classList.add('cd-live'); mBlock.classList.add('cd-live'); sBlock.classList.add('cd-live');
+    hBlock.querySelector('.cd-label').textContent = '';
+    mBlock.querySelector('.cd-label').textContent = '';
+    sBlock.querySelector('.cd-label').textContent = 'SHOOT DAY';
+    return;
+  }
+  if (now > SHOOT_END) {
+    hEl.textContent = '--'; mEl.textContent = '--'; sEl.textContent = '--';
+    hBlock.querySelector('.cd-label').textContent = 'DONE';
+    mBlock.querySelector('.cd-label').textContent = '';
+    sBlock.querySelector('.cd-label').textContent = '';
+    return;
+  }
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  hEl.textContent = String(h).padStart(2,'0');
+  mEl.textContent = String(m).padStart(2,'0');
+  sEl.textContent = String(s).padStart(2,'0');
+}
+
+function updateNowText() {
+  const now = Date.now();
+  const textEl = document.getElementById('heroNowText');
+  if (now < SHOOT_START) { textEl.innerHTML = '<strong>Pre-Production</strong> — Crew call at 10:30 AM ET'; return; }
+  if (now > SHOOT_END)   { textEl.innerHTML = '<strong>That\'s a wrap!</strong> — Great work today.'; return; }
+  for (const seg of SCHEDULE) {
+    if (now >= etHourToUTC(seg.start) && now < etHourToUTC(seg.end)) {
+      textEl.innerHTML = `<strong>Now:</strong> ${seg.label}`; return;
+    }
+  }
+  textEl.innerHTML = '<strong>Between segments</strong> — check schedule below';
+}
+
+function parseTimeStr(str) {
+  const [h, m] = str.split(':').map(Number);
+  return Date.UTC(SHOOT_DATE[0], SHOOT_DATE[1], SHOOT_DATE[2], h + ET_OFFSET, m, 0);
+}
+
+function updateHighlight() {
+  const now = Date.now();
+  document.querySelectorAll('.tl-block').forEach(block => {
+    const s = block.dataset.start, e = block.dataset.end;
+    if (!s || !e) return;
+    block.classList.remove('now','past');
+    if (now >= parseTimeStr(s) && now < parseTimeStr(e)) block.classList.add('now');
+    else if (now >= parseTimeStr(e)) block.classList.add('past');
+  });
+}
+
+function go(id) { document.getElementById(id)?.scrollIntoView({ behavior:'smooth' }); }
+const ids = ['hero','schedule','segments','crew','camera','deliverables'];
+const pills = document.querySelectorAll('.nav-pill');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 80;
+  let cur = ids[0];
+  for (const id of ids) { const el = document.getElementById(id); if (el && el.offsetTop <= y) cur = id; }
+  pills.forEach((p,i) => p.classList.toggle('active', ids[i] === cur));
+});
+
+updateCountdown();
+updateNowText();
+updateHighlight();
+setInterval(updateCountdown, 1000);
+setInterval(() => { updateNowText(); updateHighlight(); }, 15000);
+</script>
+</body>
+</html>

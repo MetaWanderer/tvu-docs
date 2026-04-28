@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TelevisaUnivision — MediaHub Integration Brief</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --green: #70b858;
+    --green-light: #8fd474;
+    --green-glow: rgba(112,184,88,0.18);
+    --green-bg: rgba(112,184,88,0.08);
+    --green-border: rgba(112,184,88,0.2);
+    --blue: #3b82f6;
+    --blue-bg: rgba(59,130,246,0.08);
+    --blue-border: rgba(59,130,246,0.2);
+    --orange: #f59e0b;
+    --orange-bg: rgba(245,158,11,0.08);
+    --orange-border: rgba(245,158,11,0.2);
+    --gray: #6b7280;
+    --gray-bg: rgba(107,114,128,0.08);
+    --gray-border: rgba(107,114,128,0.18);
+    --bg: #0a0a0a;
+    --bg-alt: #0f0f0f;
+    --card: #141414;
+    --surface: #1a1a1a;
+    --border: #242424;
+    --glass: rgba(20,20,20,0.7);
+    --glass-border: rgba(255,255,255,0.06);
+    --text: #f0f0f0;
+    --text-sec: #9ca3af;
+    --text-dim: #4b5563;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.5);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg); color: var(--text);
+    line-height:1.6; -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::-webkit-scrollbar { width:5px; }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+  /* ── Fade in ────────────────────────────────── */
+  .fade { opacity:0; transform:translateY(24px); transition:opacity 0.6s ease, transform 0.6s ease; }
+  .fade.visible { opacity:1; transform:translateY(0); }
+
+  /* ── Nav ─────────────────────────────────────── */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(10,10,10,0.85);
+    backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+    border-bottom:1px solid var(--glass-border);
+    height:54px; display:flex; align-items:center; padding:0 40px;
+    justify-content:space-between;
+  }
+  .nav-left { display:flex; align-items:center; gap:12px; }
+  .nav-logo {
+    width:30px; height:30px; background:var(--green); border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .nav-logo svg { width:16px; height:16px; fill:white; }
+  .nav-title { font-size:13px; font-weight:600; color:var(--text); }
+  .nav-title span { color:var(--text-dim); font-weight:400; }
+  .nav-badge {
+    font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+    background:var(--green-bg); color:var(--green); border:1px solid var(--green-border);
+    padding:3px 9px; border-radius:100px;
+  }
+  .nav-links { display:flex; gap:4px; }
+  .nav-link {
+    font-size:12px; color:var(--text-sec); text-decoration:none;
+    padding:5px 14px; border-radius:100px; transition:all 200ms; font-weight:500;
+  }
+  .nav-link:hover { background:var(--surface); color:var(--text); }
+
+  /* ── Hero ────────────────────────────────────── */
+  .hero {
+    padding:130px 40px 90px; text-align:center;
+    position:relative; overflow:hidden;
+  }
+  .hero::before {
+    content:''; position:absolute; top:-250px; left:50%; transform:translateX(-50%);
+    width:900px; height:900px;
+    background:radial-gradient(circle, rgba(112,184,88,0.1) 0%, transparent 65%);
+    pointer-events:none;
+    animation:glow-pulse 6s ease-in-out infinite alternate;
+  }
+  @keyframes glow-pulse {
+    0% { opacity:0.5; transform:translateX(-50%) scale(1); }
+    100% { opacity:1; transform:translateX(-50%) scale(1.08); }
+  }
+  .hero-inner { position:relative; z-index:1; max-width:780px; margin:0 auto; }
+  .hero-badge {
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--green-bg); border:1px solid var(--green-border);
+    color:var(--green); font-size:11px; font-weight:700;
+    letter-spacing:0.12em; text-transform:uppercase;
+    padding:7px 18px; border-radius:100px; margin-bottom:28px;
+  }
+  .pulse-dot {
+    width:6px; height:6px; border-radius:50%; background:var(--green);
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(1.6)} }
+
+  .hero h1 {
+    font-size:clamp(36px,5vw,60px); font-weight:800;
+    letter-spacing:-2px; line-height:1.08; margin-bottom:18px;
+    background:linear-gradient(135deg, #fff 0%, #9ca3af 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .hero h1 em {
+    font-style:normal;
+    background:linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .hero-sub {
+    font-size:17px; color:var(--text-sec); font-weight:300;
+    margin-bottom:48px; letter-spacing:-0.2px;
+  }
+
+  /* Goal pills */
+  .goal-pills { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
+  .goal-pill {
+    display:flex; align-items:center; gap:10px;
+    background:var(--glass); border:1px solid var(--glass-border);
+    padding:12px 22px; border-radius:100px;
+    transition:all 250ms; cursor:default;
+  }
+  .goal-pill:hover { border-color:var(--green-border); transform:translateY(-2px); box-shadow:var(--shadow); }
+  .goal-pill-icon { font-size:16px; }
+  .goal-pill-text { font-size:13px; font-weight:500; color:var(--text-sec); }
+
+  /* ── Wrapper ──────────────────────────────────── */
+  .wrap { max-width:1100px; margin:0 auto; padding:0 40px; }
+
+  /* ── Section ─────────────────────────────────── */
+  .section { padding:80px 0; }
+  .section.alt { background:var(--bg-alt); }
+  .sec-label {
+    font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--green); margin-bottom:10px;
+  }
+  .sec-title {
+    font-size:clamp(26px,3vw,36px); font-weight:700;
+    letter-spacing:-1px; color:var(--text); margin-bottom:40px;
+  }
+
+  /* ── Milestone Timeline ───────────────────────── */
+  .milestones { display:flex; flex-direction:column; gap:0; position:relative; }
+  .milestones::before {
+    content:''; position:absolute; left:27px; top:28px; bottom:28px;
+    width:2px; background:linear-gradient(to bottom, var(--green) 0%, var(--border) 100%);
+  }
+  .milestone { display:flex; gap:28px; align-items:flex-start; padding-bottom:28px; }
+  .milestone:last-child { padding-bottom:0; }
+  .ms-dot {
+    width:56px; height:56px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; font-weight:800; position:relative; z-index:1;
+    border:2px solid;
+  }
+  .ms-dot.done { background:var(--green-bg); border-color:var(--green); color:var(--green); }
+  .ms-dot.progress { background:var(--orange-bg); border-color:var(--orange); color:var(--orange); }
+  .ms-dot.planned { background:var(--gray-bg); border-color:var(--gray-border); color:var(--gray); }
+  .ms-dot.nab { background:var(--blue-bg); border-color:var(--blue); color:var(--blue); }
+
+  .ms-body {
+    flex:1; background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius); padding:24px 28px; margin-top:8px;
+    transition:border-color 200ms;
+  }
+  .ms-body:hover { border-color:var(--glass-border); }
+  .ms-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px; }
+  .ms-title { font-size:18px; font-weight:700; letter-spacing:-0.3px; }
+  .ms-status {
+    font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+    padding:4px 12px; border-radius:100px;
+  }
+  .status-done { background:var(--green-bg); color:var(--green); border:1px solid var(--green-border); }
+  .status-progress { background:var(--orange-bg); color:var(--orange); border:1px solid var(--orange-border); }
+  .status-planned { background:var(--gray-bg); color:var(--gray); border:1px solid var(--gray-border); }
+  .status-nab { background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue-border); }
+
+  .ms-desc { font-size:13px; color:var(--text-sec); margin-bottom:16px; line-height:1.6; }
+
+  .ms-chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip {
+    font-size:12px; font-weight:500; color:var(--text-sec);
+    background:var(--surface); border:1px solid var(--border);
+    padding:5px 12px; border-radius:6px;
+  }
+  .chip.green { color:var(--green); background:var(--green-bg); border-color:var(--green-border); }
+  .chip.orange { color:var(--orange); background:var(--orange-bg); border-color:var(--orange-border); }
+  .chip.blue { color:var(--blue); background:var(--blue-bg); border-color:var(--blue-border); }
+
+  /* ── Components ──────────────────────────────── */
+  .comp-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .comp-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius); padding:28px 24px;
+    display:flex; flex-direction:column; gap:16px;
+    transition:border-color 200ms, transform 200ms;
+    position:relative; overflow:hidden;
+  }
+  .comp-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  }
+  .comp-card.done::before { background:var(--green); }
+  .comp-card.progress::before { background:var(--orange); }
+  .comp-card.planned::before { background:var(--gray); }
+  .comp-card:hover { border-color:var(--glass-border); transform:translateY(-3px); box-shadow:var(--shadow); }
+
+  .comp-num { font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-dim); }
+  .comp-icon { font-size:32px; line-height:1; }
+  .comp-title { font-size:17px; font-weight:700; letter-spacing:-0.3px; }
+  .comp-desc { font-size:13px; color:var(--text-sec); line-height:1.6; flex:1; }
+  .comp-status {
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:11px; font-weight:700; letter-spacing:0.07em; text-transform:uppercase;
+    padding:5px 12px; border-radius:100px; width:fit-content;
+  }
+  .comp-status .dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+  .comp-status.done { background:var(--green-bg); color:var(--green); border:1px solid var(--green-border); }
+  .comp-status.done .dot { background:var(--green); }
+  .comp-status.progress { background:var(--orange-bg); color:var(--orange); border:1px solid var(--orange-border); }
+  .comp-status.progress .dot { background:var(--orange); animation:pulse 1.5s infinite; }
+  .comp-status.planned { background:var(--gray-bg); color:var(--gray); border:1px solid var(--gray-border); }
+  .comp-status.planned .dot { background:var(--gray); }
+
+  /* ── Status Dashboard ────────────────────────── */
+  .status-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+  .stat-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius-sm); padding:20px 18px;
+    text-align:center; display:flex; flex-direction:column; gap:8px; align-items:center;
+    transition:border-color 200ms;
+  }
+  .stat-card:hover { border-color:var(--glass-border); }
+  .stat-icon { font-size:22px; line-height:1; }
+  .stat-label { font-size:11px; font-weight:600; color:var(--text-sec); line-height:1.3; }
+  .stat-badge {
+    font-size:10px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+    padding:3px 10px; border-radius:100px; margin-top:2px;
+  }
+  .stat-badge.done { background:var(--green-bg); color:var(--green); border:1px solid var(--green-border); }
+  .stat-badge.progress { background:var(--orange-bg); color:var(--orange); border:1px solid var(--orange-border); }
+  .stat-badge.planned { background:var(--gray-bg); color:var(--gray); border:1px solid var(--gray-border); }
+  .stat-badge.nab { background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue-border); }
+
+  /* ── NAB Callout ──────────────────────────────── */
+  .nab-banner {
+    background:linear-gradient(135deg, rgba(59,130,246,0.06) 0%, rgba(112,184,88,0.06) 100%);
+    border:1px solid var(--blue-border); border-radius:var(--radius);
+    padding:40px 48px; display:grid; grid-template-columns:1fr auto;
+    gap:32px; align-items:center;
+  }
+  .nab-label { font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--blue); margin-bottom:8px; }
+  .nab-title { font-size:26px; font-weight:700; letter-spacing:-0.5px; margin-bottom:10px; }
+  .nab-desc { font-size:14px; color:var(--text-sec); line-height:1.6; }
+  .nab-chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .nab-tag-box {
+    text-align:center; background:var(--blue-bg); border:1px solid var(--blue-border);
+    border-radius:var(--radius); padding:20px 32px; flex-shrink:0;
+  }
+  .nab-tag { font-size:32px; font-weight:800; color:var(--blue); letter-spacing:-1px; }
+  .nab-tag-sub { font-size:12px; color:var(--text-sec); margin-top:4px; }
+
+  /* ── Strategic Outcome ───────────────────────── */
+  .outcome-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+  .outcome-item {
+    display:flex; gap:14px; align-items:flex-start;
+    background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius-sm); padding:18px 20px;
+    transition:border-color 200ms;
+  }
+  .outcome-item:hover { border-color:var(--green-border); }
+  .outcome-icon { font-size:20px; flex-shrink:0; margin-top:1px; }
+  .outcome-text { font-size:13px; font-weight:500; color:var(--text-sec); line-height:1.5; }
+  .outcome-text strong { color:var(--text); display:block; margin-bottom:2px; }
+
+  /* ── Footer ──────────────────────────────────── */
+  footer {
+    border-top:1px solid var(--border); padding:24px 40px;
+    display:flex; justify-content:space-between; align-items:center;
+    max-width:100%; flex-wrap:wrap; gap:10px;
+  }
+  .foot-l { font-size:12px; color:var(--text-dim); }
+  .foot-l span { color:var(--text-sec); }
+  .foot-r { font-size:11px; color:var(--text-dim); }
+
+  @media(max-width:900px) {
+    .comp-grid { grid-template-columns:1fr; }
+    .status-grid { grid-template-columns:repeat(3,1fr); }
+    .nab-banner { grid-template-columns:1fr; }
+    nav { padding:0 16px; }
+    .wrap { padding:0 20px; }
+    .hero { padding:100px 20px 70px; }
+    footer { padding:18px 20px; }
+    .nav-links { display:none; }
+  }
+  @media(max-width:600px) {
+    .status-grid { grid-template-columns:repeat(2,1fr); }
+    .outcome-grid { grid-template-columns:1fr; }
+    .milestones::before { left:23px; }
+    .ms-dot { width:46px; height:46px; font-size:15px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-left">
+    <div class="nav-logo">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <span class="nav-title">TVU Networks <span>/ TelevisaUnivision</span></span>
+    <span class="nav-badge">Project Brief</span>
+  </div>
+  <div class="nav-links">
+    <a class="nav-link" href="#objectives">Objectives</a>
+    <a class="nav-link" href="#milestones">Milestones</a>
+    <a class="nav-link" href="#components">Components</a>
+    <a class="nav-link" href="#status">Status</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-inner fade">
+    <div class="hero-badge"><div class="pulse-dot"></div> MediaHub Integration</div>
+    <h1>Televisa<em>Univision</em></h1>
+    <p class="hero-sub">Automated MediaHub workflows — independent, resilient, scalable</p>
+    <div class="goal-pills">
+      <div class="goal-pill"><span class="goal-pill-icon">⚙️</span><span class="goal-pill-text">Self-Service Automation</span></div>
+      <div class="goal-pill"><span class="goal-pill-icon">🔏</span><span class="goal-pill-text">Audience Watermarking</span></div>
+      <div class="goal-pill"><span class="goal-pill-icon">⚡</span><span class="goal-pill-text">Auto Failover</span></div>
+      <div class="goal-pill"><span class="goal-pill-icon">🧩</span><span class="goal-pill-text">Containerized Architecture</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Milestones -->
+<div class="section" id="milestones">
+  <div class="wrap">
+    <div class="sec-label fade">Delivery Milestones</div>
+    <div class="sec-title fade">Project Roadmap</div>
+
+    <div class="milestones">
+
+      <!-- M1 -->
+      <div class="milestone fade">
+        <div class="ms-dot done">1</div>
+        <div class="ms-body">
+          <div class="ms-header">
+            <span class="ms-title">Infrastructure Deployment</span>
+            <span class="ms-status status-done">✓ Completed</span>
+          </div>
+          <p class="ms-desc">MediaHub servers installed on-site. Base workflow infrastructure operational with full integration groundwork established.</p>
+          <div class="ms-chips">
+            <span class="chip green">On-site Servers</span>
+            <span class="chip green">Workflow Infrastructure</span>
+            <span class="chip green">Integration Foundation</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- M2 -->
+      <div class="milestone fade">
+        <div class="ms-dot progress">2</div>
+        <div class="ms-body">
+          <div class="ms-header">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+              <span class="ms-title">Audience Watermarking Framework</span>
+              <span style="font-size:11px;color:var(--text-dim);font-family:monospace;">FB-8723</span>
+            </div>
+            <span class="ms-status status-progress">In Progress</span>
+          </div>
+          <p class="ms-desc">Watermarking natively integrated into MediaHub workflows — designed for extensibility across additional processing tools.</p>
+          <div class="ms-chips">
+            <span class="chip orange">Feature Tracked</span>
+            <span class="chip orange">Architecture Aligned</span>
+            <span class="chip orange">Product Review</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- M3 -->
+      <div class="milestone fade">
+        <div class="ms-dot progress">3</div>
+        <div class="ms-body">
+          <div class="ms-header">
+            <span class="ms-title">Component Development</span>
+            <span class="ms-status status-progress">In Development</span>
+          </div>
+          <p class="ms-desc">Three core components being built in parallel — containerized processing, watermarking core, and automatic failover.</p>
+          <div class="ms-chips">
+            <span class="chip green">Core Watermarking — Done</span>
+            <span class="chip orange">Container Workflows — In Dev</span>
+            <span class="chip">Auto Failover — Planned</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- M4 -->
+      <div class="milestone fade">
+        <div class="ms-dot nab">4</div>
+        <div class="ms-body">
+          <div class="ms-header">
+            <span class="ms-title">Industry Demonstration — NAB</span>
+            <span class="ms-status status-nab">Targeting NAB</span>
+          </div>
+          <p class="ms-desc">Live showcase of containerized MediaHub processing workflows including Reuters watermarking — same architecture supporting Televisa.</p>
+          <div class="ms-chips">
+            <span class="chip blue">Reuters Watermarking Demo</span>
+            <span class="chip blue">Containerized Workflows</span>
+            <span class="chip blue">Partner Ecosystem</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Components -->
+<div class="section alt" id="components">
+  <div class="wrap">
+    <div class="sec-label fade">Milestone 3 Breakdown</div>
+    <div class="sec-title fade">Core Components</div>
+    <div class="comp-grid">
+
+      <div class="comp-card progress fade">
+        <div class="comp-num">Component 01</div>
+        <div class="comp-icon">🧩</div>
+        <div class="comp-title">Containerized Workflow Processing</div>
+        <div class="comp-desc">MediaHub Workflow Builder — operators insert containerized processing steps. Supports watermarking and future tools.</div>
+        <span class="comp-status progress"><span class="dot"></span> In Development</span>
+      </div>
+
+      <div class="comp-card done fade">
+        <div class="comp-num">Component 02</div>
+        <div class="comp-icon">🔏</div>
+        <div class="comp-title">Core Watermarking Integration</div>
+        <div class="comp-desc">Base watermarking functionality delivered. Ready to integrate into the full containerized workflow architecture.</div>
+        <span class="comp-status done"><span class="dot"></span> Completed</span>
+      </div>
+
+      <div class="comp-card planned fade">
+        <div class="comp-num">Component 03</div>
+        <div class="comp-icon">⚡</div>
+        <div class="comp-title">Automatic Failover</div>
+        <div class="comp-desc">Automated stream failover for improved reliability. Planned for next major MediaHub release — prior to NAB.</div>
+        <span class="comp-status planned"><span class="dot"></span> Next Release</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Current Status -->
+<div class="section" id="status">
+  <div class="wrap">
+    <div class="sec-label fade">At a Glance</div>
+    <div class="sec-title fade">Current Status</div>
+    <div class="status-grid fade">
+      <div class="stat-card">
+        <div class="stat-icon">🏗️</div>
+        <div class="stat-label">Infrastructure Deployment</div>
+        <span class="stat-badge done">Completed</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🔏</div>
+        <div class="stat-label">Watermarking Base</div>
+        <span class="stat-badge done">Completed</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🧩</div>
+        <div class="stat-label">Container Architecture</div>
+        <span class="stat-badge progress">In Dev</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-label">Auto Failover</div>
+        <span class="stat-badge planned">Next Release</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-label">NAB Demonstration</div>
+        <span class="stat-badge nab">Targeting NAB</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAB + Outcome -->
+<div class="section alt">
+  <div class="wrap">
+    <div class="nab-banner fade">
+      <div>
+        <div class="nab-label">Strategic Target</div>
+        <div class="nab-title">NAB Industry Demonstration</div>
+        <div class="nab-desc">Showcase containerized MediaHub processing — Reuters watermarking + Televisa architecture in one live demo. Validates the extensible processing ecosystem and enables future partner integrations.</div>
+        <div class="nab-chips">
+          <span class="chip blue">Reuters Workflow</span>
+          <span class="chip blue">Televisa Architecture</span>
+          <span class="chip blue">Partner Ecosystem</span>
+          <span class="chip blue">Live Demo</span>
+        </div>
+      </div>
+      <div class="nab-tag-box">
+        <div class="nab-tag">NAB</div>
+        <div class="nab-tag-sub">Target Milestone</div>
+      </div>
+    </div>
+
+    <div style="margin-top:48px;">
+      <div class="sec-label fade">When Complete</div>
+      <div class="sec-title fade">Strategic Outcome</div>
+      <div class="outcome-grid fade">
+        <div class="outcome-item">
+          <div class="outcome-icon">⚙️</div>
+          <div class="outcome-text"><strong>Self-Service Workflows</strong>Televisa operates MediaHub independently — no TVU intervention required</div>
+        </div>
+        <div class="outcome-item">
+          <div class="outcome-icon">🔏</div>
+          <div class="outcome-text"><strong>Integrated Watermarking</strong>Audience watermarking runs natively inside MediaHub workflows</div>
+        </div>
+        <div class="outcome-item">
+          <div class="outcome-icon">⚡</div>
+          <div class="outcome-text"><strong>Automatic Failover</strong>Resilient transmission — streams recover without manual intervention</div>
+        </div>
+        <div class="outcome-item">
+          <div class="outcome-icon">🧩</div>
+          <div class="outcome-text"><strong>Extensible Architecture</strong>Containerized processing enables future workflow expansion and partner integrations</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-l">TVU Networks <span>/ TelevisaUnivision MediaHub Integration</span></div>
+  <div class="foot-r">Executive Project Brief · Socrates Lozano</div>
+</footer>
+
+<script>
+  // Scroll-triggered fade-in
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade').forEach(el => observer.observe(el));
+
+  // Nav scroll style
+  window.addEventListener('scroll', () => {
+    document.querySelector('nav').style.background =
+      window.scrollY > 40 ? 'rgba(10,10,10,0.95)' : 'rgba(10,10,10,0.85)';
+  });
+</script>
+</body>
+</html>

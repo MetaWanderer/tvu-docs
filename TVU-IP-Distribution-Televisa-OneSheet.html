@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TVU IP Distribution — Televisa · Univision</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --tvu-green: #00c4a7;
+    --tvu-green-dark: #009e87;
+    --tvu-green-glow: rgba(0, 196, 167, 0.2);
+    --tvu-dark: #0a1628;
+    --tvu-dark-alt: #0d1e38;
+    --tvu-card: #0f2040;
+    --tvu-surface: #152848;
+    --tvu-border: #1e3a5f;
+    --tvu-white: #ffffff;
+    --tvu-gray: #8ba3bf;
+    --tvu-light: #c8d8e8;
+    --tvu-red: #ff5252;
+    --tvu-yellow: #ffd740;
+    --page-w: 1200px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; }
+
+  body {
+    font-family: 'Open Sans', 'Inter', sans-serif;
+    background: var(--tvu-dark);
+    color: var(--tvu-white);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+
+  /* ─── Page wrapper ─── */
+  .page {
+    max-width: var(--page-w);
+    margin: 0 auto;
+    padding: 48px 52px 40px;
+    position: relative;
+  }
+
+  /* ─── Top accent line ─── */
+  .top-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(to right, var(--tvu-green), #70b858, var(--tvu-green));
+  }
+
+  /* ─── Header ─── */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 36px;
+  }
+  .header-left {}
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--tvu-green);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--tvu-green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.5)} }
+  .headline {
+    font-family: 'Inter', sans-serif;
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.05;
+    color: var(--tvu-white);
+    margin-bottom: 10px;
+  }
+  .headline em {
+    font-style: normal;
+    color: var(--tvu-green);
+  }
+  .subhead {
+    font-size: 15px;
+    color: var(--tvu-gray);
+    font-weight: 300;
+  }
+  .tvu-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .tvu-logo-ring {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    border: 2px solid var(--tvu-green);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--tvu-green);
+    letter-spacing: -0.5px;
+  }
+  .tvu-tagline {
+    font-size: 10px;
+    color: var(--tvu-gray);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-align: right;
+  }
+
+  /* ─── Savings Hero Bar ─── */
+  .savings-bar {
+    background: var(--tvu-card);
+    border: 1px solid var(--tvu-border);
+    border-radius: 16px;
+    padding: 24px 36px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .savings-bar::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--tvu-green);
+  }
+  .cost-block { text-align: center; }
+  .cost-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--tvu-gray);
+    margin-bottom: 6px;
+  }
+  .cost-num {
+    font-family: 'Inter', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1px;
+  }
+  .cost-num.red { color: var(--tvu-red); }
+  .cost-num.green { color: var(--tvu-green); }
+  .cost-sub { font-size: 12px; color: var(--tvu-gray); margin-top: 2px; }
+  .arrow-block {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .arrow-line {
+    width: 40px; height: 2px;
+    background: linear-gradient(to right, var(--tvu-red), var(--tvu-green));
+    border-radius: 2px;
+  }
+  .arrow-head {
+    width: 0; height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 10px solid var(--tvu-green);
+    transform: rotate(-90deg) translateX(4px);
+  }
+  .savings-hero {
+    text-align: center;
+  }
+  .savings-pct {
+    font-family: 'Inter', sans-serif;
+    font-size: 52px;
+    font-weight: 800;
+    color: var(--tvu-green);
+    letter-spacing: -2px;
+    line-height: 1;
+  }
+  .savings-pct-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--tvu-green);
+    margin-top: 4px;
+  }
+  .savings-note { font-size: 11px; color: var(--tvu-gray); margin-top: 4px; }
+
+  /* ─── Three Columns ─── */
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+  .col-card {
+    background: var(--tvu-card);
+    border: 1px solid var(--tvu-border);
+    border-radius: 14px;
+    padding: 24px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .col-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    border-radius: 14px 14px 0 0;
+  }
+  .col-card.problem::before { background: var(--tvu-red); }
+  .col-card.solution::before { background: var(--tvu-green); }
+  .col-card.migrate::before { background: var(--tvu-yellow); }
+  .col-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .col-title.problem { color: var(--tvu-red); }
+  .col-title.solution { color: var(--tvu-green); }
+  .col-title.migrate { color: var(--tvu-yellow); }
+  .col-heading {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--tvu-white);
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+  .point-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .point-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--tvu-light);
+    line-height: 1.4;
+  }
+  .point-icon {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+    margin-top: 0px;
+  }
+  .point-icon.red { background: rgba(255,82,82,0.12); color: var(--tvu-red); }
+  .point-icon.green { background: rgba(0,196,167,0.12); color: var(--tvu-green); }
+  .point-icon.yellow { background: rgba(255,215,64,0.12); color: var(--tvu-yellow); }
+
+  /* Migration steps inline */
+  .migrate-steps { display: flex; flex-direction: column; gap: 0; }
+  .m-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--tvu-border);
+  }
+  .m-step:last-child { border-bottom: none; }
+  .m-num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(255,215,64,0.12);
+    border: 1px solid rgba(255,215,64,0.3);
+    color: var(--tvu-yellow);
+    font-size: 12px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .m-content {}
+  .m-title { font-size: 13px; font-weight: 700; color: var(--tvu-white); }
+  .m-time { font-size: 11px; color: var(--tvu-yellow); font-weight: 600; }
+  .m-desc { font-size: 11px; color: var(--tvu-gray); margin-top: 1px; line-height: 1.3; }
+
+  /* ─── Products Row ─── */
+  .products-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+  .product-card {
+    background: var(--tvu-card);
+    border: 1px solid var(--tvu-border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+  }
+  .product-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    background: rgba(0,196,167,0.10);
+    border: 1px solid rgba(0,196,167,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .product-info {}
+  .product-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--tvu-white);
+    margin-bottom: 3px;
+  }
+  .product-tag {
+    font-size: 11px;
+    color: var(--tvu-green);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .product-points { display: flex; flex-direction: column; gap: 4px; }
+  .product-points span {
+    font-size: 12px;
+    color: var(--tvu-light);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .product-points span::before {
+    content: '→';
+    color: var(--tvu-green);
+    font-size: 11px;
+  }
+  .product-price {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--tvu-green);
+    margin-top: 8px;
+  }
+
+  /* ─── Social Proof ─── */
+  .proof-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .proof-card {
+    background: var(--tvu-surface);
+    border: 1px solid var(--tvu-border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    text-align: center;
+  }
+  .proof-num {
+    font-family: 'Inter', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--tvu-green);
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .proof-client {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--tvu-white);
+    margin-bottom: 3px;
+  }
+  .proof-desc { font-size: 11px; color: var(--tvu-gray); line-height: 1.3; }
+
+  /* ─── CTA Footer ─── */
+  .cta-bar {
+    background: linear-gradient(135deg, rgba(0,196,167,0.08) 0%, rgba(0,82,204,0.05) 100%);
+    border: 1px solid rgba(0,196,167,0.2);
+    border-radius: 14px;
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .cta-left {}
+  .cta-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--tvu-white);
+    margin-bottom: 4px;
+  }
+  .cta-sub { font-size: 13px; color: var(--tvu-gray); }
+  .cta-steps {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cta-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 4px;
+  }
+  .cta-step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--tvu-green);
+    color: var(--tvu-dark);
+    font-size: 14px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cta-step-label { font-size: 12px; font-weight: 700; color: var(--tvu-white); }
+  .cta-step-time { font-size: 10px; color: var(--tvu-green); font-weight: 600; }
+  .cta-arrow { color: var(--tvu-green); font-size: 14px; margin-top: -12px; }
+  .cta-contact {
+    text-align: right;
+  }
+  .cta-contact-name { font-size: 14px; font-weight: 700; color: var(--tvu-white); }
+  .cta-contact-info { font-size: 12px; color: var(--tvu-green); margin-top: 2px; }
+  .cta-contact-web { font-size: 11px; color: var(--tvu-gray); margin-top: 2px; }
+
+  /* ─── Bottom bar ─── */
+  .bottom-bar {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--tvu-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .bottom-bar-left { font-size: 11px; color: var(--tvu-gray); }
+  .bottom-bar-right {
+    display: flex;
+    gap: 20px;
+  }
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--tvu-gray);
+  }
+  .stat-pill strong { color: var(--tvu-green); font-size: 13px; font-weight: 700; }
+
+  /* ─── Print ─── */
+  @media print {
+    body { background: var(--tvu-dark); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page { padding: 32px 40px; }
+    @page { size: landscape; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="top-bar"></div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="eyebrow"><span class="eyebrow-dot"></span>TVU Networks · IP Distribution</div>
+      <h1 class="headline">From Satellite to IP.<br><em>76–86% Cost Savings.</em> No Disruption.</h1>
+      <p class="subhead">A conversation for Televisa · Univision — your path off satellite starts in weeks, not months.</p>
+    </div>
+    <div class="tvu-badge">
+      <div class="tvu-logo-ring">TVU</div>
+      <div class="tvu-tagline">tvunetworks.com</div>
+    </div>
+  </div>
+
+  <!-- Savings Hero Bar -->
+  <div class="savings-bar">
+    <div class="cost-block">
+      <div class="cost-label">Satellite today</div>
+      <div class="cost-num red">$350K–$590K</div>
+      <div class="cost-sub">per channel / year · no redundancy</div>
+    </div>
+    <div class="arrow-block">
+      <div class="arrow-line"></div>
+      <div class="arrow-head"></div>
+    </div>
+    <div class="savings-hero">
+      <div class="savings-pct">76–86%</div>
+      <div class="savings-pct-label">Cost Reduction</div>
+      <div class="savings-note">1 channel · 100 destinations</div>
+    </div>
+    <div class="arrow-block">
+      <div class="arrow-line"></div>
+      <div class="arrow-head"></div>
+    </div>
+    <div class="cost-block">
+      <div class="cost-label">TVU IP Distribution</div>
+      <div class="cost-num green">$84K</div>
+      <div class="cost-sub">per channel / year · includes redundancy path</div>
+    </div>
+  </div>
+
+  <!-- Three Columns: Problem · Solution · Migrate -->
+  <div class="three-col">
+    <!-- Problem -->
+    <div class="col-card problem">
+      <div class="col-title problem">The Challenge</div>
+      <div class="col-heading">Why Satellite<br>Is Losing Ground</div>
+      <ul class="point-list">
+        <li>
+          <div class="point-icon red">⚠</div>
+          <span><strong>C-Band at risk</strong> — FCC repurposed 280 MHz for 5G. Upper C-band under review.</span>
+        </li>
+        <li>
+          <div class="point-icon red">💲</div>
+          <span><strong>Rising transponder costs</strong> — SES-Intelsat merger controls 96% of U.S. C-band spectrum.</span>
+        </li>
+        <li>
+          <div class="point-icon red">⏱</div>
+          <span><strong>Weeks to add a destination</strong> — ship hardware, install dish, wait 2–4 weeks per site.</span>
+        </li>
+        <li>
+          <div class="point-icon red">🔧</div>
+          <span><strong>Aging infrastructure</strong> — IRD fleets $1,500–$2,500/unit. Manual failover takes 5–15 min.</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Solution -->
+    <div class="col-card solution">
+      <div class="col-title solution">The Solution</div>
+      <div class="col-heading">TVU IP Distribution<br>Drop-In Replacement</div>
+      <ul class="point-list">
+        <li>
+          <div class="point-icon green">✓</div>
+          <span><strong>Same workflow, same endpoints</strong> — transparent satellite replacement, zero retraining.</span>
+        </li>
+        <li>
+          <div class="point-icon green">⚡</div>
+          <span><strong>Add destinations in hours</strong> — software provisioning, no truck rolls, no dish installs.</span>
+        </li>
+        <li>
+          <div class="point-icon green">🛡</div>
+          <span><strong>99.95% SLA · Auto failover &lt;1 sec</strong> — exceeds satellite reliability benchmarks.</span>
+        </li>
+        <li>
+          <div class="point-icon green">🌐</div>
+          <span><strong>500+ global PoPs</strong> — low latency delivery worldwide, PTP timing built in.</span>
+        </li>
+        <li>
+          <div class="point-icon green">📈</div>
+          <span><strong>Savings multiply</strong> — 7 channels × 100 destinations = $588K IP vs. $2.45M–$4.13M satellite.</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Migration -->
+    <div class="col-card migrate">
+      <div class="col-title migrate">The Path</div>
+      <div class="col-heading">Start in Weeks.<br>Scale at Your Pace.</div>
+      <div class="migrate-steps">
+        <div class="m-step">
+          <div class="m-num">1</div>
+          <div class="m-content">
+            <div class="m-title">Assess</div>
+            <div class="m-time">Weeks 1–2</div>
+            <div class="m-desc">Audit satellite utilization. Identify pilot channels. Define success metrics.</div>
+          </div>
+        </div>
+        <div class="m-step">
+          <div class="m-num">2</div>
+          <div class="m-content">
+            <div class="m-title">Pilot</div>
+            <div class="m-time">Weeks 3–6</div>
+            <div class="m-desc">Deploy TVU on 5–10 destinations. Run side-by-side with satellite. Validate quality.</div>
+          </div>
+        </div>
+        <div class="m-step">
+          <div class="m-num">3</div>
+          <div class="m-content">
+            <div class="m-title">Scale</div>
+            <div class="m-time">Months 2–6</div>
+            <div class="m-desc">Migrate non-critical channels. Deploy TVU receivers. Begin decommissioning satellite.</div>
+          </div>
+        </div>
+        <div class="m-step">
+          <div class="m-num">4</div>
+          <div class="m-content">
+            <div class="m-title">Optimize</div>
+            <div class="m-time">Month 6+</div>
+            <div class="m-desc">Full IP migration. Cloud integration. Expand destinations and live production capabilities.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Products -->
+  <div class="products-row">
+    <div class="product-card">
+      <div class="product-icon">⚡</div>
+      <div class="product-info">
+        <div class="product-name">TVU Grid</div>
+        <div class="product-tag">Proven Broadcast-Grade Delivery</div>
+        <div class="product-points">
+          <span>ISSP protocol — 10+ year track record</span>
+          <span>Per-connection FEC — zero-loss delivery</span>
+          <span>500+ global PoPs — broadcast-grade quality, no genlock needed</span>
+          <span>~$300/receiver endpoint (PTP built-in)</span>
+        </div>
+        <div class="product-price">$50–70 / destination stream / month</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-icon">☁️</div>
+      <div class="product-info">
+        <div class="product-name">TVU MediaHub</div>
+        <div class="product-tag">Protocol-Adaptive Gateway</div>
+        <div class="product-points">
+          <span>Anything-in / anything-out architecture</span>
+          <span>SRT, RIST, Zixi, HLS, RTMP — all supported</span>
+          <span>No rip-and-replace of existing receivers</span>
+          <span>Cloud-native, infinitely scalable</span>
+        </div>
+        <div class="product-price">$70–90 / destination stream / month</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Social Proof -->
+  <div class="proof-row">
+    <div class="proof-card">
+      <div class="proof-num">200+</div>
+      <div class="proof-client">ABC NewsOne</div>
+      <div class="proof-desc">All-affiliate satellite-to-IP migration across the U.S. Running since 2019.</div>
+    </div>
+    <div class="proof-card">
+      <div class="proof-num">47</div>
+      <div class="proof-client">CNN Newsource</div>
+      <div class="proof-desc">International news feed distribution via TVU Grid to CNN affiliates in 47 countries.</div>
+    </div>
+    <div class="proof-card">
+      <div class="proof-num">28</div>
+      <div class="proof-client">LatAm Content Dist.</div>
+      <div class="proof-desc">Premium content distribution across Latin America. Satellite replacement by 2027.</div>
+    </div>
+    <div class="proof-card">
+      <div class="proof-num">200+</div>
+      <div class="proof-client">ANI (Asia)</div>
+      <div class="proof-desc">India's premier news agency — 7-year TVU Grid deployment across APAC at scale.</div>
+    </div>
+  </div>
+
+  <!-- CTA Bar -->
+  <div class="cta-bar">
+    <div class="cta-left">
+      <div class="cta-title">Your satellite replacement can begin in days.</div>
+      <div class="cta-sub">Non-disruptive. No capital spend upfront. Start with a 30-minute discovery call.</div>
+    </div>
+    <div class="cta-steps">
+      <div class="cta-step">
+        <div class="cta-step-num">1</div>
+        <div class="cta-step-label">Discovery Call</div>
+        <div class="cta-step-time">30 min</div>
+      </div>
+      <div class="cta-arrow">→</div>
+      <div class="cta-step">
+        <div class="cta-step-num">2</div>
+        <div class="cta-step-label">Proof of Concept</div>
+        <div class="cta-step-time">2–4 weeks</div>
+      </div>
+      <div class="cta-arrow">→</div>
+      <div class="cta-step">
+        <div class="cta-step-num">3</div>
+        <div class="cta-step-label">Production Rollout</div>
+        <div class="cta-step-time">Your timeline</div>
+      </div>
+    </div>
+    <div class="cta-contact">
+      <div class="cta-contact-name">TVU Networks</div>
+      <div class="cta-contact-info">tvunetworks.com</div>
+      <div class="cta-contact-web">Confidential · For Discussion Purposes</div>
+    </div>
+  </div>
+
+  <!-- Bottom -->
+  <div class="bottom-bar">
+    <div class="bottom-bar-left">TVU Networks · IP Distribution · Confidential</div>
+    <div class="bottom-bar-right">
+      <div class="stat-pill"><strong>99.95%</strong> Availability SLA</div>
+      <div class="stat-pill"><strong>&lt;1 sec</strong> Auto Failover</div>
+      <div class="stat-pill"><strong>500+</strong> Global PoPs</div>
+      <div class="stat-pill"><strong>10+ yr</strong> Track Record</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

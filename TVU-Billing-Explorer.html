@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TVU GO — Subscription Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --green: #33E233;
+  --green-dim: rgba(51,226,51,0.12);
+  --green-border: rgba(51,226,51,0.25);
+  --black: #000000;
+  --s1: #0c0c0c;
+  --s2: #141414;
+  --s3: #1c1c1c;
+  --border: #222222;
+  --border2: #2a2a2a;
+  --text: #ffffff;
+  --t2: #888888;
+  --t3: #444444;
+  --red: #ff3b3b;
+  --red-dim: rgba(255,59,59,0.1);
+  --amber: #ffaa00;
+  --amber-dim: rgba(255,170,0,0.1);
+  --blue: #0099ff;
+  --blue-dim: rgba(0,153,255,0.1);
+  --purple: #aa55ff;
+  --purple-dim: rgba(170,85,255,0.1);
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+  --display: 'Syne', sans-serif;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--black);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(0,0,0,0.94); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width: 1400px; margin: 0 auto; padding: 0 28px;
+  display: flex; align-items: center; height: 58px; gap: 16px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.logo-mark {
+  width: 32px; height: 32px;
+}
+.nav-brand {
+  font-family: var(--display);
+  font-size: 15px; font-weight: 800;
+  color: var(--green); letter-spacing: -0.01em;
+}
+.nav-divider { width: 1px; height: 20px; background: var(--border2); flex-shrink: 0; }
+.nav-subtitle {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--t2); letter-spacing: 0.04em; white-space: nowrap;
+}
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.last-updated {
+  font-family: var(--mono); font-size: 10px; color: var(--t3); white-space: nowrap;
+}
+.btn-refresh {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 16px; border-radius: 7px;
+  background: var(--green); color: var(--black);
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  border: none; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+}
+.btn-refresh:hover { background: #45f045; }
+.btn-refresh:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-refresh .spin { animation: spin 0.7s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn-sid {
+  padding: 8px 14px; border-radius: 7px;
+  background: var(--s2); border: 1px solid var(--border2);
+  color: var(--t2); font-family: var(--mono); font-size: 11px;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.btn-sid:hover { color: var(--text); border-color: var(--border2); }
+
+/* ── WRAP ── */
+.wrap { max-width: 1400px; margin: 0 auto; padding: 0 28px; }
+
+/* ── SID SETUP ── */
+.setup-panel {
+  background: var(--s1); border: 1px solid var(--green-border);
+  border-radius: 12px; padding: 20px 24px; margin: 20px 0;
+  display: none;
+}
+.setup-panel.show { display: block; }
+.setup-title {
+  font-family: var(--display); font-size: 14px; color: var(--green);
+  margin-bottom: 12px;
+}
+.setup-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+.setup-group { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 220px; }
+.setup-label {
+  font-family: var(--mono); font-size: 9px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--t3);
+}
+.setup-input {
+  background: var(--s3); border: 1px solid var(--border2);
+  border-radius: 7px; padding: 9px 12px;
+  font-family: var(--mono); font-size: 12px; color: var(--text);
+  outline: none; width: 100%; transition: border-color 0.2s;
+}
+.setup-input:focus { border-color: var(--green-border); }
+.setup-input::placeholder { color: var(--t3); }
+.btn-save {
+  padding: 9px 20px; border-radius: 7px; border: none;
+  background: var(--green); color: var(--black);
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+}
+.btn-save:hover { background: #45f045; }
+.setup-hint {
+  font-family: var(--mono); font-size: 10px; color: var(--t3);
+  margin-top: 10px; line-height: 1.6;
+}
+
+/* ── CORS FALLBACK ── */
+.fallback-panel {
+  background: var(--s1); border: 1px solid rgba(255,170,0,0.3);
+  border-radius: 12px; padding: 20px 24px; margin: 16px 0;
+  display: none;
+}
+.fallback-panel.show { display: block; }
+.fallback-title {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--amber);
+  margin-bottom: 12px;
+}
+.curl-pre {
+  background: #0a0a0a; border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 12px;
+  font-family: var(--mono); font-size: 11px; color: #aaa;
+  line-height: 1.7; overflow-x: auto; white-space: pre;
+  position: relative;
+}
+.copy-btn {
+  position: absolute; top: 10px; right: 10px;
+  padding: 4px 10px; border-radius: 5px;
+  background: var(--s3); border: 1px solid var(--border2);
+  font-family: var(--mono); font-size: 10px; color: var(--t2);
+  cursor: pointer; transition: all 0.15s;
+}
+.copy-btn:hover { color: var(--text); }
+.paste-area {
+  width: 100%; background: #0a0a0a; border: 1px solid var(--border2);
+  border-radius: 8px; padding: 12px 14px;
+  font-family: var(--mono); font-size: 11px; color: var(--text);
+  outline: none; resize: vertical; min-height: 80px; line-height: 1.5;
+  transition: border-color 0.2s;
+}
+.paste-area:focus { border-color: var(--green-border); }
+.paste-area::placeholder { color: var(--t3); }
+.paste-row { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+.paste-hint { font-family: var(--mono); font-size: 10px; color: var(--t3); flex: 1; }
+
+/* ── STATS ── */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(6, 1fr);
+  gap: 10px; margin: 24px 0;
+}
+.stat-card {
+  background: var(--s1); border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px 20px;
+  position: relative; overflow: hidden;
+  transition: border-color 0.2s;
+}
+.stat-card:hover { border-color: var(--border2); }
+.stat-top-line {
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  border-radius: 10px 10px 0 0;
+}
+.stat-label {
+  font-family: var(--mono); font-size: 9px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--t3);
+  margin-bottom: 10px;
+}
+.stat-val {
+  font-family: var(--display); font-size: 32px; line-height: 1;
+  letter-spacing: -0.03em; margin-bottom: 4px;
+}
+.stat-sub { font-family: var(--mono); font-size: 9px; color: var(--t3); }
+
+/* ── CHARTS ── */
+.charts-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 16px; margin-bottom: 24px;
+}
+.chart-card {
+  background: var(--s1); border: 1px solid var(--border);
+  border-radius: 12px; padding: 22px 24px;
+}
+.chart-title {
+  font-family: var(--display); font-size: 13px; font-weight: 800;
+  letter-spacing: -0.01em; margin-bottom: 4px;
+}
+.chart-sub {
+  font-family: var(--mono); font-size: 9px; color: var(--t3);
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 20px;
+}
+.chart-wrap { position: relative; height: 200px; }
+.chart-legend {
+  display: flex; flex-wrap: wrap; gap: 10px 16px; margin-top: 16px;
+}
+.legend-item {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--mono); font-size: 10px; color: var(--t2);
+}
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── TABLE SECTION ── */
+.table-section {
+  background: var(--s1); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden; margin-bottom: 40px;
+}
+.table-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.table-title {
+  font-family: var(--display); font-size: 14px; font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.record-count {
+  font-family: var(--mono); font-size: 10px; color: var(--t3);
+}
+.tbl-search {
+  flex: 1; min-width: 180px;
+  background: var(--s3); border: 1px solid var(--border2);
+  border-radius: 7px; padding: 7px 12px;
+  font-family: var(--mono); font-size: 11px; color: var(--text);
+  outline: none; transition: border-color 0.2s;
+}
+.tbl-search:focus { border-color: var(--green-border); }
+.tbl-search::placeholder { color: var(--t3); }
+.tbl-filter {
+  background: var(--s3); border: 1px solid var(--border2);
+  border-radius: 7px; padding: 7px 12px;
+  font-family: var(--mono); font-size: 11px; color: var(--text);
+  outline: none; cursor: pointer; -webkit-appearance: none;
+  transition: border-color 0.2s;
+}
+.tbl-filter:focus { border-color: var(--green-border); }
+.tbl-filter option { background: var(--s1); }
+.btn-csv {
+  padding: 7px 16px; border-radius: 7px;
+  background: var(--s3); border: 1px solid var(--border2);
+  font-family: var(--mono); font-size: 10px; color: var(--t2);
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.btn-csv:hover { color: var(--green); border-color: var(--green-border); }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+thead tr { border-bottom: 1px solid var(--border2); background: var(--s2); }
+th {
+  padding: 10px 16px; text-align: left;
+  font-family: var(--mono); font-size: 9px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--t3);
+  cursor: pointer; white-space: nowrap; user-select: none;
+  transition: color 0.15s;
+}
+th:hover { color: var(--t2); }
+th.sorted { color: var(--green); }
+th span { margin-left: 3px; }
+
+tbody tr {
+  border-bottom: 1px solid rgba(34,34,34,0.8);
+  transition: background 0.1s;
+}
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: rgba(255,255,255,0.02); }
+td {
+  padding: 11px 16px;
+  font-family: var(--mono); font-size: 11px; color: var(--t2);
+  white-space: nowrap;
+}
+td.primary { color: var(--text); }
+td.null { color: var(--t3); font-style: italic; }
+
+.status-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 9px; border-radius: 4px;
+  font-size: 10px; font-weight: 500; letter-spacing: 0.04em;
+}
+.status-tag::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+.tag-trialing  { background: var(--green-dim);  color: var(--green); }
+.tag-active    { background: var(--blue-dim);   color: var(--blue); }
+.tag-cancelled { background: var(--red-dim);    color: var(--red); }
+.tag-expired   { background: var(--amber-dim);  color: var(--amber); }
+.tag-unknown   { background: rgba(255,255,255,0.05); color: var(--t2); }
+
+.empty-row td {
+  padding: 60px 20px; text-align: center;
+  font-family: var(--mono); font-size: 12px; color: var(--t3);
+}
+
+/* ── LOADING OVERLAY ── */
+#loading-bar {
+  position: fixed; top: 0; left: 0; height: 2px; z-index: 9999;
+  background: var(--green); transition: width 0.3s ease;
+  box-shadow: 0 0 8px rgba(51,226,51,0.6);
+}
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; right: 28px; z-index: 9999;
+  padding: 10px 18px; border-radius: 8px;
+  font-family: var(--mono); font-size: 11px;
+  background: var(--s2); border: 1px solid var(--border2);
+  animation: toastIn 0.2s ease both;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+}
+@keyframes toastIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px) { .stats-grid { grid-template-columns: repeat(3,1fr); } }
+@media(max-width:800px)  {
+  .stats-grid { grid-template-columns: repeat(2,1fr); }
+  .charts-row { grid-template-columns: 1fr; }
+}
+@media(max-width:500px)  {
+  .nav-subtitle { display: none; }
+  .wrap { padding: 0 16px; }
+}
+</style>
+</head>
+<body>
+
+<div id="loading-bar" style="width:0%"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <svg class="logo-mark" viewBox="0 0 100 60" fill="none">
+        <path d="M35 30C35 19.5 43.5 11 54 11C64.5 11 73 19.5 73 30C73 40.5 64.5 49 54 49C47 49 40.8 45.2 37.5 39.5" stroke="#33E233" stroke-width="8" stroke-linecap="round" fill="none"/>
+        <path d="M65 30C65 40.5 56.5 49 46 49C35.5 49 27 40.5 27 30C27 19.5 35.5 11 46 11C53 11 59.2 14.8 62.5 20.5" stroke="#33E233" stroke-width="8" stroke-linecap="round" fill="none"/>
+      </svg>
+      <div class="nav-brand">TVU GO</div>
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-subtitle">Subscription Intelligence</div>
+    <div class="nav-right">
+      <div class="last-updated" id="last-updated">Never fetched</div>
+      <button class="btn-sid" onclick="toggleSetup()" id="sid-btn">⚙ Config</button>
+      <button class="btn-refresh" id="refresh-btn" onclick="fetchData()">
+        <span id="refresh-icon">↻</span> Refresh
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- SID SETUP -->
+  <div class="setup-panel" id="setup-panel">
+    <div class="setup-title">API Configuration</div>
+    <div class="setup-row">
+      <div class="setup-group" style="flex:2;">
+        <div class="setup-label">Endpoint</div>
+        <input class="setup-input" id="cfg-endpoint" value="https://gateway.tvunetworks.com/billing-service/billing/querySubscriptions">
+      </div>
+      <div class="setup-group" style="flex:1;">
+        <div class="setup-label">Session ID (SID Cookie value)</div>
+        <input class="setup-input" id="cfg-sid" type="password" placeholder="Paste your SID here…">
+      </div>
+      <div class="setup-group" style="flex:0.5;min-width:120px;">
+        <div class="setup-label">App Name</div>
+        <input class="setup-input" id="cfg-app" value="TVUGO">
+      </div>
+      <button class="btn-save" onclick="saveConfig()">Save</button>
+    </div>
+    <div class="setup-hint">
+      Get your SID: Log in to the TVU portal → open DevTools → Application → Cookies → copy the SID value.<br>
+      Browsers cannot set Cookie headers directly — if the API call is blocked by CORS, a curl fallback will appear below.
+    </div>
+  </div>
+
+  <!-- CORS FALLBACK -->
+  <div class="fallback-panel" id="fallback-panel">
+    <div class="fallback-title">⚡ Browser blocked — run this in your terminal, paste the response below</div>
+    <div class="curl-pre" id="curl-pre">
+      <button class="copy-btn" onclick="copyCurl()">Copy</button>
+      <span id="curl-text"></span>
+    </div>
+    <textarea class="paste-area" id="paste-area" placeholder='Paste the full JSON response here…' rows="4"></textarea>
+    <div class="paste-row">
+      <span class="paste-hint">Paste the JSON from your terminal then click Parse</span>
+      <button class="btn-save" onclick="parsePaste()">Parse Response</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid" id="stats-grid">
+    <div class="stat-card">
+      <div class="stat-top-line" style="background:var(--t3)"></div>
+      <div class="stat-label">Total</div>
+      <div class="stat-val" id="s-total" style="color:var(--text)">—</div>
+      <div class="stat-sub">all records</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top-line" style="background:var(--green)"></div>
+      <div class="stat-label">Trialing</div>
+      <div class="stat-val" id="s-trialing" style="color:var(--green)">—</div>
+      <div class="stat-sub">active trials</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top-line" style="background:var(--blue)"></div>
+      <div class="stat-label">Active</div>
+      <div class="stat-val" id="s-active" style="color:var(--blue)">—</div>
+      <div class="stat-sub">paid subscribers</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top-line" style="background:var(--red)"></div>
+      <div class="stat-label">Cancelled</div>
+      <div class="stat-val" id="s-cancelled" style="color:var(--red)">—</div>
+      <div class="stat-sub">churned</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top-line" style="background:var(--amber)"></div>
+      <div class="stat-label">Expired</div>
+      <div class="stat-val" id="s-expired" style="color:var(--amber)">—</div>
+      <div class="stat-sub">lapsed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top-line" style="background:linear-gradient(90deg,var(--green),var(--blue))"></div>
+      <div class="stat-label">Conversion Rate</div>
+      <div class="stat-val" id="s-conv" style="color:var(--green)">—</div>
+      <div class="stat-sub" id="s-conv-sub">trial → paid</div>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">Status Distribution</div>
+      <div class="chart-sub">Breakdown by plan status</div>
+      <div class="chart-wrap"><canvas id="chart-status"></canvas></div>
+      <div class="chart-legend" id="legend-status"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Plan Distribution</div>
+      <div class="chart-sub">Most popular plans</div>
+      <div class="chart-wrap"><canvas id="chart-plans"></canvas></div>
+      <div class="chart-legend" id="legend-plans"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Conversion Funnel</div>
+      <div class="chart-sub">Trial outcomes</div>
+      <div class="chart-wrap"><canvas id="chart-conv"></canvas></div>
+      <div class="chart-legend" id="legend-conv"></div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-section">
+    <div class="table-header">
+      <div class="table-title">All Subscribers</div>
+      <div class="record-count" id="record-count">0 records</div>
+      <input class="tbl-search" id="tbl-search" placeholder="Search email, user ID, plan…" oninput="applyTableFilters()">
+      <select class="tbl-filter" id="tbl-status" onchange="applyTableFilters()">
+        <option value="">All statuses</option>
+        <option value="trialing">Trialing</option>
+        <option value="active">Active</option>
+        <option value="cancelled">Cancelled</option>
+        <option value="expired">Expired</option>
+      </select>
+      <button class="btn-csv" onclick="exportCSV()">↓ Export CSV</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortBy('planStatus')">Status<span id="sort-planStatus"></span></th>
+            <th onclick="sortBy('userEmail')">Email<span id="sort-userEmail"></span></th>
+            <th onclick="sortBy('userId')">User ID<span id="sort-userId"></span></th>
+            <th onclick="sortBy('planName')">Plan<span id="sort-planName"></span></th>
+            <th onclick="sortBy('groupName')">Group<span id="sort-groupName"></span></th>
+            <th onclick="sortBy('trialStartAt')">Trial Start<span id="sort-trialStartAt"> ↓</span></th>
+            <th onclick="sortBy('trialEndAt')">Trial End<span id="sort-trialEndAt"></span></th>
+            <th onclick="sortBy('subscribedAt')">Subscribed<span id="sort-subscribedAt"></span></th>
+            <th onclick="sortBy('cancelledAt')">Cancelled<span id="sort-cancelledAt"></span></th>
+            <th onclick="sortBy('expiredAt')">Expired<span id="sort-expiredAt"></span></th>
+            <th onclick="sortBy('updatedAt')">Last Updated<span id="sort-updatedAt"></span></th>
+          </tr>
+        </thead>
+        <tbody id="tbl-body">
+          <tr class="empty-row"><td colspan="11">No data — click Refresh to load</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────
+const LS = 'tvu-billing-v2';
+let cfg = { endpoint: 'https://gateway.tvunetworks.com/billing-service/billing/querySubscriptions', sid: '', app: 'TVUGO' };
+
+function loadConfig() {
+  try { const s = JSON.parse(localStorage.getItem(LS)); if (s) cfg = { ...cfg, ...s }; } catch(e) {}
+  document.getElementById('cfg-endpoint').value = cfg.endpoint;
+  document.getElementById('cfg-sid').value = cfg.sid || '';
+  document.getElementById('cfg-app').value = cfg.app || 'TVUGO';
+}
+
+function saveConfig() {
+  cfg.endpoint = document.getElementById('cfg-endpoint').value.trim();
+  cfg.sid = document.getElementById('cfg-sid').value.trim();
+  cfg.app = document.getElementById('cfg-app').value.trim();
+  localStorage.setItem(LS, JSON.stringify(cfg));
+  toast('Config saved');
+  document.getElementById('setup-panel').classList.remove('show');
+}
+
+function toggleSetup() {
+  document.getElementById('setup-panel').classList.toggle('show');
+}
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let allRecords = [];
+let filtered   = [];
+let sortKey    = 'trialStartAt';
+let sortDir    = -1; // -1 = desc (newest first)
+let charts     = {};
+
+// ── LOADING ───────────────────────────────────────────────────────────────
+function setLoading(v) {
+  const btn  = document.getElementById('refresh-btn');
+  const icon = document.getElementById('refresh-icon');
+  const bar  = document.getElementById('loading-bar');
+  btn.disabled = v;
+  icon.textContent = v ? '⟳' : '↻';
+  icon.style.animation = v ? 'spin 0.7s linear infinite' : '';
+  bar.style.width = v ? '70%' : '100%';
+  if (!v) setTimeout(() => bar.style.width = '0%', 400);
+}
+
+// ── FETCH ─────────────────────────────────────────────────────────────────
+async function fetchData() {
+  setLoading(true);
+  document.getElementById('fallback-panel').classList.remove('show');
+
+  const body = { app: cfg.app, planStatus: 0 };
+
+  try {
+    const controller = new AbortController();
+    const tid = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(cfg.endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(body),
+      signal: controller.signal
+    });
+    clearTimeout(tid);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    processResponse(json);
+  } catch(e) {
+    setLoading(false);
+    showFallback(body);
+  }
+}
+
+function showFallback(body) {
+  document.getElementById('fallback-panel').classList.add('show');
+  const sid = cfg.sid || 'YOUR_SID_HERE';
+  document.getElementById('curl-text').textContent =
+`curl --location --request POST '${cfg.endpoint}' \\
+  --header 'Cookie: SID=${sid}' \\
+  --header 'Content-Type: application/json' \\
+  --data-raw '${JSON.stringify(body)}'`;
+}
+
+function copyCurl() {
+  navigator.clipboard.writeText(document.getElementById('curl-text').textContent)
+    .then(() => toast('Copied to clipboard'));
+}
+
+function parsePaste() {
+  try {
+    const json = JSON.parse(document.getElementById('paste-area').value.trim());
+    processResponse(json);
+    document.getElementById('fallback-panel').classList.remove('show');
+    document.getElementById('paste-area').value = '';
+  } catch(e) { toast('Invalid JSON — check your paste', true); }
+}
+
+// ── PROCESS ───────────────────────────────────────────────────────────────
+function processResponse(json) {
+  allRecords = json.records || json.data || (Array.isArray(json) ? json : []);
+  // Default sort: trialStartAt desc (most recent first)
+  sortKey = 'trialStartAt';
+  sortDir = -1;
+  applyTableFilters();
+  updateStats();
+  buildCharts();
+  setLoading(false);
+  document.getElementById('last-updated').textContent =
+    'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  toast(`${allRecords.length} records loaded`);
+}
+
+// ── STATS ─────────────────────────────────────────────────────────────────
+function updateStats() {
+  const counts = { trialing: 0, active: 0, cancelled: 0, expired: 0 };
+  allRecords.forEach(r => {
+    const s = (r.planStatus || '').toLowerCase();
+    if (counts[s] !== undefined) counts[s]++;
+  });
+  const total   = allRecords.length;
+  const decided = counts.active + counts.cancelled + counts.expired;
+  const conv    = decided > 0 ? ((counts.active / decided) * 100).toFixed(1) + '%' : '—';
+
+  document.getElementById('s-total').textContent    = total;
+  document.getElementById('s-trialing').textContent = counts.trialing;
+  document.getElementById('s-active').textContent   = counts.active;
+  document.getElementById('s-cancelled').textContent = counts.cancelled;
+  document.getElementById('s-expired').textContent  = counts.expired;
+  document.getElementById('s-conv').textContent     = conv;
+  document.getElementById('s-conv-sub').textContent =
+    decided > 0 ? `${counts.active} of ${decided} decided` : 'trial → paid';
+}
+
+// ── CHARTS ────────────────────────────────────────────────────────────────
+const CHART_DEFAULTS = {
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      backgroundColor: '#111',
+      borderColor: '#333',
+      borderWidth: 1,
+      titleFont: { family: 'DM Mono', size: 11 },
+      bodyFont:  { family: 'DM Mono', size: 11 },
+      padding: 10,
+    }
+  }
+};
+
+function destroyChart(id) {
+  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+}
+
+function buildCharts() {
+  // Status Distribution
+  const counts = { Trialing: 0, Active: 0, Cancelled: 0, Expired: 0 };
+  allRecords.forEach(r => {
+    const s = (r.planStatus || '').toLowerCase();
+    if (s === 'trialing')  counts.Trialing++;
+    else if (s === 'active')    counts.Active++;
+    else if (s === 'cancelled') counts.Cancelled++;
+    else if (s === 'expired')   counts.Expired++;
+  });
+
+  destroyChart('status');
+  charts.status = new Chart(document.getElementById('chart-status'), {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(counts),
+      datasets: [{ data: Object.values(counts), backgroundColor: ['#33E233','#0099ff','#ff3b3b','#ffaa00'], borderColor: '#0c0c0c', borderWidth: 3, hoverOffset: 6 }]
+    },
+    options: { ...CHART_DEFAULTS, cutout: '65%', animation: { animateRotate: true, duration: 800 } }
+  });
+  buildLegend('legend-status', Object.keys(counts), Object.values(counts), ['#33E233','#0099ff','#ff3b3b','#ffaa00']);
+
+  // Plan Distribution (top 6)
+  const planCounts = {};
+  allRecords.forEach(r => { const p = r.planName || 'Unknown'; planCounts[p] = (planCounts[p] || 0) + 1; });
+  const sorted = Object.entries(planCounts).sort((a,b) => b[1]-a[1]).slice(0, 6);
+  const planColors = ['#33E233','#0099ff','#aa55ff','#ff3b3b','#ffaa00','#00ccaa'];
+
+  destroyChart('plans');
+  charts.plans = new Chart(document.getElementById('chart-plans'), {
+    type: 'doughnut',
+    data: {
+      labels: sorted.map(([k]) => k),
+      datasets: [{ data: sorted.map(([,v]) => v), backgroundColor: planColors, borderColor: '#0c0c0c', borderWidth: 3, hoverOffset: 6 }]
+    },
+    options: { ...CHART_DEFAULTS, cutout: '65%', animation: { animateRotate: true, duration: 900 } }
+  });
+  buildLegend('legend-plans', sorted.map(([k]) => k), sorted.map(([,v]) => v), planColors);
+
+  // Conversion Funnel
+  const decided = counts.Active + counts.Cancelled + counts.Expired;
+  const convData = [counts.Trialing, counts.Active, counts.Cancelled + counts.Expired];
+  const convLabels = ['Still Trialing', 'Converted', 'Churned'];
+  const convColors = ['#33E233', '#0099ff', '#ff3b3b'];
+
+  destroyChart('conv');
+  charts.conv = new Chart(document.getElementById('chart-conv'), {
+    type: 'doughnut',
+    data: {
+      labels: convLabels,
+      datasets: [{ data: convData, backgroundColor: convColors, borderColor: '#0c0c0c', borderWidth: 3, hoverOffset: 6 }]
+    },
+    options: { ...CHART_DEFAULTS, cutout: '65%', animation: { animateRotate: true, duration: 1000 } }
+  });
+  buildLegend('legend-conv', convLabels, convData, convColors);
+}
+
+function buildLegend(containerId, labels, values, colors) {
+  const total = values.reduce((a,b) => a+b, 0) || 1;
+  const container = document.getElementById(containerId);
+  container.innerHTML = labels.map((label, i) => `
+    <div class="legend-item">
+      <div class="legend-dot" style="background:${colors[i]}"></div>
+      <span>${label}</span>
+      <span style="color:var(--t3);margin-left:2px;">(${values[i]})</span>
+    </div>
+  `).join('');
+}
+
+// ── TABLE ─────────────────────────────────────────────────────────────────
+function fmtDate(v) {
+  if (!v) return null;
+  try {
+    const d = typeof v === 'number' ? new Date(v) : new Date(v);
+    if (isNaN(d)) return String(v);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  } catch(e) { return String(v); }
+}
+
+function fmtEmail(email) {
+  if (!email) return null;
+  return `<a href="mailto:${email}" style="color:var(--green);text-decoration:none;" onclick="event.stopPropagation()">${email}</a>`;
+}
+
+function statusTag(s) {
+  const cls = { trialing:'tag-trialing', active:'tag-active', cancelled:'tag-cancelled', expired:'tag-expired' };
+  const key = (s||'').toLowerCase();
+  return `<span class="status-tag ${cls[key]||'tag-unknown'}">${key||'—'}</span>`;
+}
+
+function td(v, primary) {
+  if (v === null || v === undefined || v === '') return `<td class="null">—</td>`;
+  return `<td class="${primary ? 'primary' : ''}">${v}</td>`;
+}
+
+function applyTableFilters() {
+  const q = document.getElementById('tbl-search').value.toLowerCase();
+  const sf = document.getElementById('tbl-status').value;
+  filtered = allRecords.filter(r => {
+    const matchQ = !q || [r.userId, r.userEmail, r.planName, r.groupName, r.groupId]
+      .some(v => v && String(v).toLowerCase().includes(q));
+    const matchS = !sf || (r.planStatus || '').toLowerCase() === sf;
+    return matchQ && matchS;
+  });
+  doSort();
+  renderTable();
+}
+
+function sortBy(key) {
+  document.querySelectorAll('th').forEach(t => t.classList.remove('sorted'));
+  document.querySelectorAll('[id^="sort-"]').forEach(el => el.textContent = '');
+  if (sortKey === key) sortDir *= -1;
+  else { sortKey = key; sortDir = -1; }
+  const th = event.currentTarget;
+  th.classList.add('sorted');
+  document.getElementById('sort-' + key).textContent = sortDir === -1 ? ' ↓' : ' ↑';
+  doSort();
+  renderTable();
+}
+
+function doSort() {
+  filtered.sort((a, b) => {
+    let av = a[sortKey], bv = b[sortKey];
+    // treat null/undefined as oldest
+    if (!av && !bv) return 0;
+    if (!av) return 1;
+    if (!bv) return -1;
+    // numeric timestamps
+    const an = typeof av === 'number' ? av : Date.parse(av);
+    const bn = typeof bv === 'number' ? bv : Date.parse(bv);
+    if (!isNaN(an) && !isNaN(bn)) return (an - bn) * sortDir;
+    return String(av).localeCompare(String(bv)) * sortDir;
+  });
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tbl-body');
+  document.getElementById('record-count').textContent = `${filtered.length} of ${allRecords.length} records`;
+
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="11">No records match your filters</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(r => `<tr>
+    <td>${statusTag(r.planStatus)}</td>
+    ${td(fmtEmail(r.userEmail))}
+    <td class="primary" style="font-family:var(--mono);font-size:10px;">${r.userId || '—'}</td>
+    ${td(r.planName)}
+    ${td(r.groupName || r.groupId)}
+    ${td(fmtDate(r.trialStartAt))}
+    ${td(fmtDate(r.trialEndAt))}
+    ${td(fmtDate(r.subscribedAt))}
+    ${td(fmtDate(r.cancelledAt))}
+    ${td(fmtDate(r.expiredAt))}
+    ${td(fmtDate(r.updatedAt))}
+  </tr>`).join('');
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────────
+function exportCSV() {
+  if (!filtered.length) return toast('No data to export', true);
+  const keys = ['planStatus','userEmail','userId','planName','groupId','groupName','trialStartAt','trialEndAt','subscribedAt','cancelledAt','expiredAt','externalSubscriptionId','updatedAt'];
+  const rows = [keys.join(','), ...filtered.map(r =>
+    keys.map(k => {
+      const v = r[k] == null ? '' : String(r[k]);
+      return v.includes(',') || v.includes('"') ? `"${v.replace(/"/g,'""')}"` : v;
+    }).join(',')
+  )];
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `tvu-go-subscriptions-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  toast('CSV downloaded');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────
+function toast(msg, err) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  el.style.color = err ? 'var(--red)' : 'var(--green)';
+  el.style.borderColor = err ? 'rgba(255,59,59,0.3)' : 'var(--green-border)';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2500);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+loadConfig();
+
+// Show config panel on first load if no SID set
+if (!cfg.sid) document.getElementById('setup-panel').classList.add('show');
+
+// Auto-fetch on load
+fetchData();
+</script>
+</body>
+</html>

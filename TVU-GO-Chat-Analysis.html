@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TVU GO App — Live Chat Analysis Report</title>
+<style>
+  :root {
+    --bg: #08090c;
+    --surface: #111318;
+    --surface-2: #181b22;
+    --border: #1e2130;
+    --glass: rgba(255,255,255,0.04);
+    --text: #f0f1f3;
+    --text-sec: #8b92a0;
+    --text-dim: #4a5060;
+    --green: #70b858;
+    --green-bg: rgba(112,184,88,0.1);
+    --green-border: rgba(112,184,88,0.25);
+    --red: #f87171;
+    --red-bg: rgba(248,113,113,0.08);
+    --red-border: rgba(248,113,113,0.2);
+    --blue: #60a5fa;
+    --blue-bg: rgba(96,165,250,0.08);
+    --blue-border: rgba(96,165,250,0.25);
+    --purple: #a78bfa;
+    --purple-bg: rgba(167,139,250,0.08);
+    --purple-border: rgba(167,139,250,0.25);
+    --orange: #fb923c;
+    --orange-bg: rgba(251,146,60,0.08);
+    --orange-border: rgba(251,146,60,0.2);
+    --yellow: #fbbf24;
+    --yellow-bg: rgba(251,191,36,0.08);
+    --yellow-border: rgba(251,191,36,0.2);
+    --cyan: #22d3ee;
+    --cyan-bg: rgba(34,211,238,0.08);
+    --tvu-green: #70b858;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', sans-serif;
+    background: var(--bg); color: var(--text);
+    line-height: 1.6; -webkit-font-smoothing: antialiased;
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  a { color: var(--blue); text-decoration: none; }
+
+  /* ── Nav ────────────────────────────────── */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(8,9,12,0.92);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex; align-items: center; justify-content: center;
+    gap: 4px; padding: 8px 16px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .nav-pill {
+    padding: 7px 14px; border-radius: 100px;
+    font-size: 11px; font-weight: 600; color: var(--text-dim);
+    cursor: pointer; transition: all 150ms; white-space: nowrap;
+  }
+  .nav-pill:hover, .nav-pill.active { color: var(--tvu-green); background: var(--green-bg); }
+
+  /* ── Hero ────────────────────────────────── */
+  .hero {
+    padding: 100px 24px 60px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 30%, rgba(112,184,88,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 30% 60%, rgba(167,139,250,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 70% 60%, rgba(96,165,250,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.15em; color: var(--tvu-green); margin-bottom: 8px;
+    position: relative;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 6vw, 44px); font-weight: 900;
+    letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 8px;
+    position: relative;
+  }
+  .hero-sub {
+    font-size: 14px; color: var(--text-sec); position: relative;
+    max-width: 520px; margin: 0 auto 10px;
+  }
+  .hero-date {
+    font-size: 12px; color: var(--text-dim); position: relative;
+    margin-bottom: 32px;
+  }
+
+  /* ── Stat Boxes ──────────────────────────── */
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px; max-width: 900px; margin: 0 auto;
+    position: relative;
+  }
+  .stat-box {
+    padding: 20px 16px; border-radius: 16px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+  .stat-num {
+    font-size: clamp(28px, 6vw, 40px); font-weight: 900;
+    line-height: 1; margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+  .stat-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--text-dim);
+  }
+  .stat-box.green { background: var(--green-bg); border-color: var(--green-border); }
+  .stat-box.green .stat-num { color: var(--green); }
+  .stat-box.blue { background: var(--blue-bg); border-color: var(--blue-border); }
+  .stat-box.blue .stat-num { color: var(--blue); }
+  .stat-box.purple { background: var(--purple-bg); border-color: var(--purple-border); }
+  .stat-box.purple .stat-num { color: var(--purple); }
+  .stat-box.orange { background: var(--orange-bg); border-color: var(--orange-border); }
+  .stat-box.orange .stat-num { color: var(--orange); }
+  .stat-box.yellow { background: var(--yellow-bg); border-color: var(--yellow-border); }
+  .stat-box.yellow .stat-num { color: var(--yellow); }
+  .stat-box.red { background: var(--red-bg); border-color: var(--red-border); }
+  .stat-box.red .stat-num { color: var(--red); }
+
+  /* ── Section ─────────────────────────────── */
+  .section {
+    padding: 56px 20px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .sec-head {
+    margin-bottom: 32px;
+  }
+  .sec-num {
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.15em; color: var(--tvu-green); margin-bottom: 4px;
+  }
+  .sec-title {
+    font-size: clamp(22px, 4vw, 30px); font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .sec-desc {
+    font-size: 13px; color: var(--text-sec); margin-top: 4px;
+    max-width: 600px;
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0 20px;
+  }
+
+  /* ── Sentiment Chart ─────────────────────── */
+  .chart-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 20px 16px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+  }
+  .chart-title {
+    font-size: 14px; font-weight: 700; margin-bottom: 4px;
+  }
+  .chart-subtitle {
+    font-size: 11px; color: var(--text-dim); margin-bottom: 16px;
+  }
+  .chart-bars {
+    display: flex; gap: 3px; align-items: flex-end;
+    height: 120px; min-width: 400px;
+  }
+  .chart-col {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-end;
+    height: 100%; position: relative;
+    min-width: 20px;
+  }
+  .chart-bar {
+    width: 100%; border-radius: 4px 4px 0 0;
+    min-height: 2px; transition: height 600ms ease;
+    position: relative;
+  }
+  .chart-bar.pos { background: var(--green); opacity: 0.7; }
+  .chart-bar.neg { background: var(--red); opacity: 0.7; margin-top: 2px; }
+  .chart-bar.total { background: rgba(255,255,255,0.08); }
+  .chart-bar.engagement { background: var(--blue); opacity: 0.6; }
+  .chart-label {
+    font-size: 8px; color: var(--text-dim); margin-top: 4px;
+    font-weight: 600; white-space: nowrap;
+  }
+  .chart-legend {
+    display: flex; gap: 16px; margin-top: 12px; justify-content: center;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 10px; color: var(--text-sec);
+  }
+  .legend-dot {
+    width: 8px; height: 8px; border-radius: 2px;
+  }
+
+  /* ── Comparison Row ──────────────────────── */
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  }
+  .compare-card {
+    padding: 24px 20px; border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+  .compare-card.keem { background: var(--purple-bg); border-color: var(--purple-border); }
+  .compare-card.jake { background: var(--blue-bg); border-color: var(--blue-border); }
+  .compare-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+  }
+  .compare-av {
+    width: 40px; height: 40px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 900; flex-shrink: 0;
+  }
+  .compare-name { font-size: 16px; font-weight: 800; }
+  .compare-handle { font-size: 11px; color: var(--text-sec); }
+  .compare-stats {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+  .cs-box {
+    padding: 10px 12px; border-radius: 10px;
+    background: rgba(255,255,255,0.03);
+    text-align: center;
+  }
+  .cs-val { font-size: 20px; font-weight: 900; }
+  .cs-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); }
+  .keem .cs-val { color: var(--purple); }
+  .jake .cs-val { color: var(--blue); }
+
+  /* ── Feature Cards ──────────────────────── */
+  .feature-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+  .feature-card {
+    padding: 20px; border-radius: 14px;
+    background: var(--surface); border: 1px solid var(--border);
+    transition: transform 200ms, border-color 200ms;
+  }
+  .feature-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.1); }
+  .feat-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; margin-bottom: 12px;
+  }
+  .feat-title { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+  .feat-desc { font-size: 11px; color: var(--text-sec); line-height: 1.5; margin-bottom: 10px; }
+  .feat-metric {
+    display: inline-block;
+    padding: 3px 10px; border-radius: 100px;
+    font-size: 10px; font-weight: 700;
+    background: var(--green-bg); color: var(--green);
+    border: 1px solid var(--green-border);
+  }
+  .feat-metric.warn {
+    background: var(--orange-bg); color: var(--orange);
+    border-color: var(--orange-border);
+  }
+  .feat-metric.ask {
+    background: var(--blue-bg); color: var(--blue);
+    border-color: var(--blue-border);
+  }
+
+  /* ── Quote Cards ─────────────────────────── */
+  .quote-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .quote-card {
+    padding: 20px; border-radius: 14px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .quote-card::before {
+    content: '\201C';
+    position: absolute; top: 8px; right: 16px;
+    font-size: 56px; line-height: 1; opacity: 0.05;
+    font-family: Georgia, serif;
+  }
+  .quote-card.positive { background: var(--green-bg); border-color: var(--green-border); }
+  .quote-card.question { background: var(--blue-bg); border-color: var(--blue-border); }
+  .quote-card.concern { background: var(--orange-bg); border-color: var(--orange-border); }
+  .quote-card.negative { background: var(--red-bg); border-color: var(--red-border); }
+  .quote-card.insight { background: var(--purple-bg); border-color: var(--purple-border); }
+  .quote-text {
+    font-size: 13px; font-weight: 600; line-height: 1.5;
+    margin-bottom: 10px; position: relative;
+  }
+  .quote-meta {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 10px; color: var(--text-dim);
+  }
+  .quote-user { font-weight: 700; color: var(--text-sec); }
+  .quote-tag {
+    padding: 2px 8px; border-radius: 100px;
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .tag-positive { background: rgba(112,184,88,0.15); color: var(--green); }
+  .tag-question { background: rgba(96,165,250,0.15); color: var(--blue); }
+  .tag-concern { background: rgba(251,146,60,0.15); color: var(--orange); }
+  .tag-insight { background: rgba(167,139,250,0.15); color: var(--purple); }
+  .tag-competitive { background: rgba(34,211,238,0.15); color: var(--cyan); }
+
+  /* ── Issues Table ────────────────────────── */
+  .issue-list { display: flex; flex-direction: column; gap: 10px; }
+  .issue-row {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 16px 18px; border-radius: 14px;
+    background: var(--surface); border: 1px solid var(--border);
+  }
+  .issue-severity {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 900; flex-shrink: 0;
+  }
+  .sev-high { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+  .sev-med { background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-border); }
+  .sev-low { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow-border); }
+  .issue-title { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+  .issue-desc { font-size: 11px; color: var(--text-sec); line-height: 1.4; }
+  .issue-source {
+    font-size: 9px; font-weight: 700; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin-top: 6px;
+  }
+
+  /* ── Competitor Mentions ──────────────────── */
+  .comp-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .comp-card {
+    padding: 18px; border-radius: 14px;
+    background: var(--surface); border: 1px solid var(--border);
+    text-align: center;
+  }
+  .comp-name { font-size: 16px; font-weight: 800; margin-bottom: 2px; }
+  .comp-count { font-size: 24px; font-weight: 900; color: var(--cyan); }
+  .comp-context { font-size: 10px; color: var(--text-sec); margin-top: 6px; line-height: 1.4; }
+
+  /* ── Recommendations ─────────────────────── */
+  .rec-list { display: flex; flex-direction: column; gap: 12px; }
+  .rec-card {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 20px; border-radius: 14px;
+    background: var(--surface); border: 1px solid var(--border);
+  }
+  .rec-num {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 900; flex-shrink: 0;
+    background: var(--green-bg); color: var(--green);
+    border: 1px solid var(--green-border);
+  }
+  .rec-title { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+  .rec-desc { font-size: 12px; color: var(--text-sec); line-height: 1.5; }
+  .rec-evidence {
+    margin-top: 8px; padding: 8px 12px; border-radius: 8px;
+    background: rgba(255,255,255,0.02);
+    font-size: 10px; color: var(--text-dim); font-style: italic;
+  }
+
+  /* ── Donut Chart ─────────────────────────── */
+  .donut-row {
+    display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;
+    margin-top: 20px;
+  }
+  .donut-wrap {
+    text-align: center;
+  }
+  .donut-label {
+    font-size: 11px; font-weight: 700; color: var(--text-sec);
+    margin-top: 8px;
+  }
+  .donut-pct {
+    font-size: 20px; font-weight: 900;
+  }
+
+  /* ── Question Cloud ──────────────────────── */
+  .question-list {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .q-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 14px 16px; border-radius: 12px;
+    background: var(--surface); border: 1px solid var(--border);
+  }
+  .q-count {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 900; flex-shrink: 0;
+    background: var(--blue-bg); color: var(--blue);
+    border: 1px solid var(--blue-border);
+  }
+  .q-text { font-size: 13px; font-weight: 600; }
+  .q-askers { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+
+  /* ── Key Moment Timeline ─────────────────── */
+  .moment-tl { display: flex; flex-direction: column; gap: 0; }
+  .moment-block {
+    position: relative;
+    border-left: 3px solid var(--border);
+    margin-left: 20px;
+    padding: 0 0 0 24px;
+    padding-bottom: 6px;
+  }
+  .moment-time {
+    position: absolute; left: -24px; top: 0;
+    background: var(--bg);
+    padding: 2px 0;
+    font-size: 11px; font-weight: 800; color: var(--text-dim);
+    width: 44px; text-align: right;
+    transform: translateX(-100%);
+  }
+  .moment-dot {
+    position: absolute; left: -8px; top: 4px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--bg); border: 3px solid var(--tvu-green);
+    z-index: 2;
+  }
+  .moment-dot.peak { border-color: var(--orange); box-shadow: 0 0 0 4px rgba(251,146,60,0.15); }
+  .moment-dot.issue { border-color: var(--red); }
+  .moment-card {
+    padding: 14px 16px; border-radius: 14px;
+    background: var(--surface); border: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  .moment-tag {
+    display: inline-flex; padding: 2px 8px; border-radius: 6px;
+    font-size: 9px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.06em; margin-bottom: 4px;
+  }
+  .moment-tag.keem-tag { background: rgba(167,139,250,0.15); color: var(--purple); }
+  .moment-tag.jake-tag { background: rgba(96,165,250,0.15); color: var(--blue); }
+  .moment-tag.both-tag { background: rgba(112,184,88,0.15); color: var(--green); }
+  .moment-name { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+  .moment-desc { font-size: 11px; color: var(--text-sec); line-height: 1.4; }
+  .moment-engagement {
+    margin-top: 6px; font-size: 10px; font-weight: 700;
+    color: var(--orange);
+  }
+
+  /* ── Footer ──────────────────────────────── */
+  footer {
+    padding: 40px 20px; text-align: center;
+    font-size: 11px; color: var(--text-dim);
+    border-top: 1px solid var(--border);
+  }
+  footer strong { color: var(--tvu-green); }
+
+  /* ── Mobile ──────────────────────────────── */
+  @media (max-width: 640px) {
+    .compare-grid { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: repeat(3, 1fr); }
+    .quote-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Nav ────────────────────────────────── -->
+<nav class="nav">
+  <a class="nav-pill active" onclick="go('hero')">Overview</a>
+  <a class="nav-pill" onclick="go('streams')">Streams</a>
+  <a class="nav-pill" onclick="go('sentiment')">Sentiment</a>
+  <a class="nav-pill" onclick="go('moments')">Key Moments</a>
+  <a class="nav-pill" onclick="go('features')">Features</a>
+  <a class="nav-pill" onclick="go('quotes')">Quotes</a>
+  <a class="nav-pill" onclick="go('questions')">Questions</a>
+  <a class="nav-pill" onclick="go('issues')">Issues</a>
+  <a class="nav-pill" onclick="go('competitive')">Competitive</a>
+  <a class="nav-pill" onclick="go('recs')">Recommendations</a>
+</nav>
+
+<!-- ── Hero ────────────────────────────────── -->
+<section class="hero" id="hero">
+  <div class="hero-label">TVU GO App &mdash; Live Chat Intelligence</div>
+  <h1>Field Day Stream Analysis</h1>
+  <p class="hero-sub">Real-time audience reaction data from MrKeem and JakeNBake's live TVU GO demos. 7,268 chat messages analyzed across 3 stream segments.</p>
+  <p class="hero-date">February 20, 2026 &middot; Los Angeles, CA &middot; Twitch IRL</p>
+
+  <div class="stat-grid">
+    <div class="stat-box green">
+      <div class="stat-num">7,268</div>
+      <div class="stat-label">Total Messages</div>
+    </div>
+    <div class="stat-box blue">
+      <div class="stat-num">683</div>
+      <div class="stat-label">Unique Viewers</div>
+    </div>
+    <div class="stat-box purple">
+      <div class="stat-num">783</div>
+      <div class="stat-label">TVU-Relevant Msgs</div>
+    </div>
+    <div class="stat-box orange">
+      <div class="stat-num">89%</div>
+      <div class="stat-label">Positive Sentiment</div>
+    </div>
+    <div class="stat-box yellow">
+      <div class="stat-num">504</div>
+      <div class="stat-label">Questions Asked</div>
+    </div>
+    <div class="stat-box red">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Streams Analyzed</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Stream Comparison ───────────────────── -->
+<section class="section" id="streams">
+  <div class="sec-head">
+    <div class="sec-num">01 &mdash; Stream Breakdown</div>
+    <div class="sec-title">Side-by-Side Performance</div>
+    <div class="sec-desc">Keem's stream was the primary demo showcase. Jake's first segment had technical issues; his second segment showed strong quality reception.</div>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card keem">
+      <div class="compare-header">
+        <div class="compare-av" style="background:var(--purple-bg);color:var(--purple);">K</div>
+        <div>
+          <div class="compare-name">MrKeem</div>
+          <div class="compare-handle">@MeesterKeem &middot; Primary Demo</div>
+        </div>
+      </div>
+      <div class="compare-stats">
+        <div class="cs-box">
+          <div class="cs-val">4,964</div>
+          <div class="cs-label">Messages</div>
+        </div>
+        <div class="cs-box">
+          <div class="cs-val">427</div>
+          <div class="cs-label">Chatters</div>
+        </div>
+        <div class="cs-box">
+          <div class="cs-val">502</div>
+          <div class="cs-label">TVU Mentions</div>
+        </div>
+        <div class="cs-box">
+          <div class="cs-val">89%</div>
+          <div class="cs-label">Positive</div>
+        </div>
+      </div>
+    </div>
+    <div class="compare-card jake">
+      <div class="compare-header">
+        <div class="compare-av" style="background:var(--blue-bg);color:var(--blue);">J</div>
+        <div>
+          <div class="compare-name">JakeNBake</div>
+          <div class="compare-handle">@jakenbakeLIVE &middot; 2 Segments</div>
+        </div>
+      </div>
+      <div class="compare-stats">
+        <div class="cs-box">
+          <div class="cs-val">2,304</div>
+          <div class="cs-label">Messages</div>
+        </div>
+        <div class="cs-box">
+          <div class="cs-val">356</div>
+          <div class="cs-label">Chatters</div>
+        </div>
+        <div class="cs-box">
+          <div class="cs-val">281</div>
+          <div class="cs-label">TVU Mentions</div>
+        </div>
+        <div class="cs-box">
+          <div class="cs-val">84%</div>
+          <div class="cs-label">Positive</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Sentiment ───────────────────────────── -->
+<section class="section" id="sentiment">
+  <div class="sec-head">
+    <div class="sec-num">02 &mdash; Sentiment Analysis</div>
+    <div class="sec-title">Audience Reaction Over Time</div>
+    <div class="sec-desc">First 90 minutes of each stream &mdash; the core TVU GO demo window. Green = positive, red = negative, gray = total volume.</div>
+  </div>
+
+  <!-- Keem Sentiment -->
+  <div class="chart-container">
+    <div class="chart-title">MrKeem &mdash; Sentiment Timeline</div>
+    <div class="chart-subtitle">Overwhelmingly positive throughout demo. Peaks at app reveal (10 min), PIP demo (15 min), and disconnect protection (20 min)</div>
+    <div class="chart-bars" id="keemChart"></div>
+    <div class="chart-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(255,255,255,0.12)"></div>Total msgs</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Positive</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Negative</div>
+    </div>
+  </div>
+
+  <!-- Jake Sentiment -->
+  <div class="chart-container">
+    <div class="chart-title">JakeNBake (Segment 2) &mdash; Sentiment Timeline</div>
+    <div class="chart-subtitle">Initial quality concerns at start, strong positive shift once stabilized. Peak positivity at 35-40 min mark when quality impressed viewers.</div>
+    <div class="chart-bars" id="jakeChart"></div>
+    <div class="chart-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(255,255,255,0.12)"></div>Total msgs</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Positive</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Negative</div>
+    </div>
+  </div>
+
+  <!-- Sentiment Donut Summary -->
+  <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-top:24px;">
+    <div class="chart-container" style="flex:1;min-width:200px;text-align:center;">
+      <div class="chart-title">Keem Overall</div>
+      <svg width="120" height="120" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="12"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="var(--green)" stroke-width="12"
+          stroke-dasharray="282" stroke-dashoffset="31" transform="rotate(-90 60 60)" stroke-linecap="round"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="var(--red)" stroke-width="12"
+          stroke-dasharray="282" stroke-dashoffset="251" transform="rotate(262 60 60)" stroke-linecap="round"/>
+        <text x="60" y="56" text-anchor="middle" fill="var(--green)" font-size="22" font-weight="900">89%</text>
+        <text x="60" y="72" text-anchor="middle" fill="var(--text-dim)" font-size="9" font-weight="700">POSITIVE</text>
+      </svg>
+      <div style="font-size:11px;color:var(--text-sec);margin-top:8px;">925 positive &middot; 112 negative</div>
+    </div>
+    <div class="chart-container" style="flex:1;min-width:200px;text-align:center;">
+      <div class="chart-title">Jake Overall</div>
+      <svg width="120" height="120" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="12"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="var(--blue)" stroke-width="12"
+          stroke-dasharray="282" stroke-dashoffset="45" transform="rotate(-90 60 60)" stroke-linecap="round"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="var(--red)" stroke-width="12"
+          stroke-dasharray="282" stroke-dashoffset="263" transform="rotate(212 60 60)" stroke-linecap="round"/>
+        <text x="60" y="56" text-anchor="middle" fill="var(--blue)" font-size="22" font-weight="900">84%</text>
+        <text x="60" y="72" text-anchor="middle" fill="var(--text-dim)" font-size="9" font-weight="700">POSITIVE</text>
+      </svg>
+      <div style="font-size:11px;color:var(--text-sec);margin-top:8px;">368 positive &middot; 66 negative</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Key Moments Timeline ────────────────── -->
+<section class="section" id="moments">
+  <div class="sec-head">
+    <div class="sec-num">03 &mdash; Key Moments</div>
+    <div class="sec-title">Highest-Impact Stream Moments</div>
+    <div class="sec-desc">Peak engagement windows where TVU GO features created strong audience reactions.</div>
+  </div>
+
+  <div class="moment-tl">
+
+    <div class="moment-block">
+      <div class="moment-time">0:07</div>
+      <div class="moment-dot peak"></div>
+      <div class="moment-card">
+        <span class="moment-tag keem-tag">KEEM</span>
+        <div class="moment-name">TVU GO Reveal &mdash; First Impressions</div>
+        <div class="moment-desc">Keem introduces the app. Chat explodes with "TVUGO" messages. Immediate curiosity: <em>"new mobile streaming app?"</em>, <em>"I'm curious to see how well it holds up against moblin"</em></div>
+        <div class="moment-engagement">103 msgs/5min &mdash; 2.6x baseline</div>
+      </div>
+    </div>
+
+    <div class="moment-block">
+      <div class="moment-time">0:10</div>
+      <div class="moment-dot peak"></div>
+      <div class="moment-card">
+        <span class="moment-tag keem-tag">KEEM</span>
+        <div class="moment-name">App UI + Overlay Demo</div>
+        <div class="moment-desc">Live walkthrough of GO interface. Chat overwhelmingly positive: <em>"CLEANNNN"</em>, <em>"i like the clear UI"</em>, <em>"overlays part is tuff ngl"</em>. Multiple users ask about app store availability.</div>
+        <div class="moment-engagement">73 msgs/5min &middot; 28% positive sentiment</div>
+      </div>
+    </div>
+
+    <div class="moment-block">
+      <div class="moment-time">0:15</div>
+      <div class="moment-dot peak"></div>
+      <div class="moment-card">
+        <span class="moment-tag keem-tag">KEEM</span>
+        <div class="moment-name">PIP (Picture-in-Picture) Demo</div>
+        <div class="moment-desc">Dual camera demo creates buzz. <em>"very seamless, no delay"</em>, <em>"SMOOTH"</em>, <em>"Dynamic in-stream control"</em>. Cross-platform excitement: <em>"the best part is that it's for both Android and iPhone"</em></div>
+        <div class="moment-engagement">104 msgs/5min &mdash; 2.6x baseline &middot; 26% positive</div>
+      </div>
+    </div>
+
+    <div class="moment-block">
+      <div class="moment-time">0:20</div>
+      <div class="moment-dot peak"></div>
+      <div class="moment-card">
+        <span class="moment-tag keem-tag">KEEM</span>
+        <div class="moment-name">Disconnect Protection Demo</div>
+        <div class="moment-desc">Server disconnect protection explained. Strong viewer engagement: <em>"so basically no need for rented SRT relays anymore"</em>, <em>"this app so nice I hope it's not subscription based"</em>, <em>"how much is the app?"</em></div>
+        <div class="moment-engagement">84 msgs/5min &middot; 28% positive</div>
+      </div>
+    </div>
+
+    <div class="moment-block">
+      <div class="moment-time">0:00</div>
+      <div class="moment-dot issue"></div>
+      <div class="moment-card">
+        <span class="moment-tag jake-tag">JAKE &mdash; Segment 1</span>
+        <div class="moment-name">Stream Glitch (Pre-Fix)</div>
+        <div class="moment-desc">Heavy visual artifacting at stream start. Chat reacts: <em>"your stream is buggin the fuck out"</em>, <em>"why's it so glitchy?"</em>, <em>"my eyes"</em>. Audio remained fine throughout. 133 messages in short segment before restart.</div>
+        <div class="moment-engagement" style="color:var(--red);">High negative &mdash; 23% negative sentiment</div>
+      </div>
+    </div>
+
+    <div class="moment-block">
+      <div class="moment-time">0:23</div>
+      <div class="moment-dot peak"></div>
+      <div class="moment-card">
+        <span class="moment-tag jake-tag">JAKE &mdash; Segment 2</span>
+        <div class="moment-name">Quality Redemption Moment</div>
+        <div class="moment-desc">After fix, viewers notice quality: <em>"Quality is crazy"</em>, <em>"this does look crispy"</em>, <em>"way better"</em>, <em>"looks Extra HD"</em>, <em>"very stable"</em>, <em>"tvu hook up is huge ngl"</em></div>
+        <div class="moment-engagement">77 msgs/5min &middot; 10% positive (concentrated quality praise)</div>
+      </div>
+    </div>
+
+    <div class="moment-block">
+      <div class="moment-time">0:45</div>
+      <div class="moment-dot"></div>
+      <div class="moment-card">
+        <span class="moment-tag keem-tag">KEEM</span>
+        <div class="moment-name">Pricing Discussion</div>
+        <div class="moment-desc">Chat actively debating pricing. <em>"4.99 a month is prob max"</em>, <em>"compare it to their 20k IRL backpack"</em>, <em>"if TVU makes a lifetime plan, I'd drop $100"</em>. Several ask about free trials and tiered pricing.</div>
+        <div class="moment-engagement">77 msgs/5min &middot; Active price debate</div>
+      </div>
+    </div>
+
+    <div class="moment-block">
+      <div class="moment-time">1:33</div>
+      <div class="moment-dot peak"></div>
+      <div class="moment-card">
+        <span class="moment-tag keem-tag">KEEM</span>
+        <div class="moment-name">PIP Transitions Live Demo</div>
+        <div class="moment-desc"><em>"Damn the transitions on PiP are so clean"</em>. Live PIP during Pok&eacute;mon card segment. Real-world use case resonated strongly with IRL streaming community.</div>
+        <div class="moment-engagement">Feature highlight peak</div>
+      </div>
+    </div>
+
+    <div class="moment-block">
+      <div class="moment-time">2:12</div>
+      <div class="moment-dot peak"></div>
+      <div class="moment-card">
+        <span class="moment-tag jake-tag">JAKE &mdash; Segment 2</span>
+        <div class="moment-name">PIP Slider Feature</div>
+        <div class="moment-desc"><em>"That slider feature wild PIP"</em>, <em>"picture in picture is very useful"</em>. Jake's chat validates PIP as a standout feature from a different audience perspective.</div>
+        <div class="moment-engagement">Cross-stream validation</div>
+      </div>
+    </div>
+
+    <div class="moment-block">
+      <div class="moment-time">3:39</div>
+      <div class="moment-dot"></div>
+      <div class="moment-card">
+        <span class="moment-tag both-tag">BOTH STREAMS</span>
+        <div class="moment-name">Samy's Camera Challenge</div>
+        <div class="moment-desc">Both streams converge at Samy's. TVU integration working live during the $50 challenge. <em>"WW TVU WW UNLIMITEDIRL"</em>, <em>"It's incredible how all of this is possible on the new TVU streaming app"</em></div>
+        <div class="moment-engagement">Combined audience peak</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Feature Reactions ────────────────────── -->
+<section class="section" id="features">
+  <div class="sec-head">
+    <div class="sec-num">04 &mdash; Feature Reactions</div>
+    <div class="sec-title">What Resonated With Viewers</div>
+    <div class="sec-desc">Feature-by-feature breakdown of audience reception based on chat analysis.</div>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feat-icon" style="background:var(--green-bg);color:var(--green);">PIP</div>
+      <div class="feat-title">Picture-in-Picture</div>
+      <div class="feat-desc">The #1 most discussed feature. Viewers loved smooth transitions, repositioning, and the slider control. Multiple comparisons to Moblin PIP (which is harder to set up) and IRL Pro PIP (beta-only).</div>
+      <span class="feat-metric">40+ mentions &middot; Top Feature</span>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon" style="background:var(--green-bg);color:var(--green);">DR</div>
+      <div class="feat-title">Disconnect Protection</div>
+      <div class="feat-desc">Second most impactful feature. Viewers immediately connected it to real-world pain points: "when Jinny loses her phone," "no need for rented SRT relays anymore." Seen as a true differentiator.</div>
+      <span class="feat-metric">25+ mentions &middot; Differentiator</span>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon" style="background:var(--green-bg);color:var(--green);">UI</div>
+      <div class="feat-title">Clean UI / Overlays</div>
+      <div class="feat-desc">"CLEAN" was the most repeated word during the UI demo. Overlay system praised: "overlays part is tuff," "chatoverlay is pretty good on this TVU app." Clear visual design resonated immediately.</div>
+      <span class="feat-metric">35+ mentions &middot; Instant Appeal</span>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon" style="background:var(--green-bg);color:var(--green);">OS</div>
+      <div class="feat-title">Android + iPhone</div>
+      <div class="feat-desc">Cross-platform availability called out as a major win: "the best part is that its for both Android and iPhone," "Finally some Android love." High excitement especially from Android users.</div>
+      <span class="feat-metric">20+ mentions &middot; Market Expansion</span>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon" style="background:var(--orange-bg);color:var(--orange);">$$</div>
+      <div class="feat-title">Pricing</div>
+      <div class="feat-desc">Pricing was the #1 concern/question. Majority suggested <strong>$15&ndash;30/mo</strong> as fair. Vocal minority said $5 max. Specific suggestions: $15/mo (wavy_21, digitalboba), $20/mo (seppanator), $25/mo (phivvee), $29.99/mo (4thlife). Demand for: free trial, tiered plans, lifetime $100 option, annual deal.</div>
+      <span class="feat-metric warn">30+ questions &middot; Top Concern</span>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon" style="background:var(--blue-bg);color:var(--blue);">Q</div>
+      <div class="feat-title">Stream Quality</div>
+      <div class="feat-desc">After Jake's fix, quality praised heavily: "Quality is crazy," "crispy," "Extra HD," "very stable." Back camera vs front camera quality difference noted. Overall strong quality validation.</div>
+      <span class="feat-metric">30+ mentions &middot; Validated</span>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon" style="background:var(--blue-bg);color:var(--blue);">SRT</div>
+      <div class="feat-title">SRT / RTMP Support</div>
+      <div class="feat-desc">Technical users asked about SRT ingests, RTMP server capabilities, multi-destination streaming, and OBS integration. "Custom SRT and multi-stream PogChamp." Power users see this as critical.</div>
+      <span class="feat-metric ask">15+ technical questions</span>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon" style="background:var(--orange-bg);color:var(--orange);">BAT</div>
+      <div class="feat-title">Battery &amp; Heat</div>
+      <div class="feat-desc">"What's the battery consumption like?" asked repeatedly. Concern about PIP increasing drain and phone overheating. Users want real-world battery testing data before committing.</div>
+      <span class="feat-metric warn">12+ questions &middot; Needs Data</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Key Quotes ──────────────────────────── -->
+<section class="section" id="quotes">
+  <div class="sec-head">
+    <div class="sec-num">05 &mdash; Viewer Voices</div>
+    <div class="sec-title">Executive Quote Board</div>
+    <div class="sec-desc">The most impactful viewer quotes organized by type. These represent authentic, unscripted audience reactions.</div>
+  </div>
+
+  <div class="quote-grid">
+    <!-- Positive Highlights -->
+    <div class="quote-card positive">
+      <div class="quote-text">"I know way too many people that still struggle with Twitch mobile app for streaming so this just might be useful"</div>
+      <div class="quote-meta">
+        <span class="quote-user">cape_codder</span> &middot; Keem chat &middot; 7:00
+        <span class="quote-tag tag-positive">Market Need</span>
+      </div>
+    </div>
+    <div class="quote-card positive">
+      <div class="quote-text">"Damn the transitions on PiP are so clean"</div>
+      <div class="quote-meta">
+        <span class="quote-user">tanomalous</span> &middot; Keem chat &middot; 1:33
+        <span class="quote-tag tag-positive">Feature Win</span>
+      </div>
+    </div>
+    <div class="quote-card positive">
+      <div class="quote-text">"this a Game Changer for IRL streaming. Thank You TVU"</div>
+      <div class="quote-meta">
+        <span class="quote-user">dylanchan94</span> &middot; Keem chat &middot; 53:48
+        <span class="quote-tag tag-positive">Game Changer</span>
+      </div>
+    </div>
+    <div class="quote-card positive">
+      <div class="quote-text">"tvu hook up is huge ngl"</div>
+      <div class="quote-meta">
+        <span class="quote-user">laywastedd</span> &middot; Jake chat &middot; 24:27
+        <span class="quote-tag tag-positive">Excitement</span>
+      </div>
+    </div>
+    <div class="quote-card positive">
+      <div class="quote-text">"It's incredible how all of this is possible on the new TVU streaming app"</div>
+      <div class="quote-meta">
+        <span class="quote-user">callmeinfinity</span> &middot; Jake chat &middot; 3:41:36
+        <span class="quote-tag tag-positive">Wow Factor</span>
+      </div>
+    </div>
+    <div class="quote-card positive">
+      <div class="quote-text">"I got a preview of the app, it's amazing. Have to check it out"</div>
+      <div class="quote-meta">
+        <span class="quote-user">jemintz5</span> &middot; Keem chat &middot; 22:42
+        <span class="quote-tag tag-positive">Advocacy</span>
+      </div>
+    </div>
+    <div class="quote-card positive">
+      <div class="quote-text">"Keem explains things so well I'm gonna tell everyone about this app"</div>
+      <div class="quote-meta">
+        <span class="quote-user">tripp_in_twitch</span> &middot; Keem chat &middot; 17:06
+        <span class="quote-tag tag-positive">Organic WOM</span>
+      </div>
+    </div>
+    <div class="quote-card positive">
+      <div class="quote-text">"very seamless as well, no delay"</div>
+      <div class="quote-meta">
+        <span class="quote-user">unleashninja</span> &middot; Keem chat &middot; 16:10
+        <span class="quote-tag tag-positive">Performance</span>
+      </div>
+    </div>
+
+    <!-- Insight Quotes -->
+    <div class="quote-card insight">
+      <div class="quote-text">"so basically no need for rented SRT relays anymore"</div>
+      <div class="quote-meta">
+        <span class="quote-user">markusmyrsky</span> &middot; Keem chat &middot; 21:45
+        <span class="quote-tag tag-insight">Market Insight</span>
+      </div>
+    </div>
+    <div class="quote-card insight">
+      <div class="quote-text">"using front and back camera at the same time is huge"</div>
+      <div class="quote-meta">
+        <span class="quote-user">maximum_lurker</span> &middot; Keem chat &middot; 2:54
+        <span class="quote-tag tag-insight">Feature Value</span>
+      </div>
+    </div>
+    <div class="quote-card insight">
+      <div class="quote-text">"PiP in Moblin takes a lot of steps to get set up"</div>
+      <div class="quote-meta">
+        <span class="quote-user">raerizzle</span> &middot; Jake chat &middot; 1:30:44
+        <span class="quote-tag tag-competitive">Competitive</span>
+      </div>
+    </div>
+    <div class="quote-card insight">
+      <div class="quote-text">"compare it to their 20k IRL backpack"</div>
+      <div class="quote-meta">
+        <span class="quote-user">wavy_21</span> &middot; Keem chat &middot; 50:06
+        <span class="quote-tag tag-insight">Value Perception</span>
+      </div>
+    </div>
+
+    <!-- Questions -->
+    <div class="quote-card question">
+      <div class="quote-text">"this app so nice I hope it's not subscription based"</div>
+      <div class="quote-meta">
+        <span class="quote-user">seku_sama</span> &middot; Keem chat &middot; 21:31
+        <span class="quote-tag tag-question">Pricing Anxiety</span>
+      </div>
+    </div>
+    <div class="quote-card question">
+      <div class="quote-text">"if TVU decides to make a lifetime plan, I'd probably drop a hundred dollars on it"</div>
+      <div class="quote-meta">
+        <span class="quote-user">kayleenity</span> &middot; Keem chat &middot; 2:05
+        <span class="quote-tag tag-question">Willingness to Pay</span>
+      </div>
+    </div>
+    <div class="quote-card question">
+      <div class="quote-text">"I produce for a streamer &mdash; is there a place I can DM you or TVU to run the beta? Would be a great stress-test"</div>
+      <div class="quote-meta">
+        <span class="quote-user">naivety</span> &middot; Keem chat &middot; 2:33
+        <span class="quote-tag tag-question">Inbound Lead</span>
+      </div>
+    </div>
+    <div class="quote-card question">
+      <div class="quote-text">"what's your Instagram? I work with a content creator with 1M followers"</div>
+      <div class="quote-meta">
+        <span class="quote-user">sahilgoeshard</span> &middot; Keem chat &middot; 4:22
+        <span class="quote-tag tag-question">Inbound Lead</span>
+      </div>
+    </div>
+    <div class="quote-card positive">
+      <div class="quote-text">"on the go phone streaming is amazing"</div>
+      <div class="quote-meta">
+        <span class="quote-user">im_bjam</span> &middot; Keem chat &middot; 42:55
+        <span class="quote-tag tag-positive">Category Win</span>
+      </div>
+    </div>
+    <div class="quote-card insight">
+      <div class="quote-text">"PiP in Moblin takes a lot of steps. You don't have to follow a lot of documentation or videos to get going"</div>
+      <div class="quote-meta">
+        <span class="quote-user">raerizzle</span> &middot; Jake chat &middot; 1:10
+        <span class="quote-tag tag-competitive">Ease of Use</span>
+      </div>
+    </div>
+    <div class="quote-card positive">
+      <div class="quote-text">"PIP is GODLIKE"</div>
+      <div class="quote-meta">
+        <span class="quote-user">maximum_lurker</span> &middot; Keem chat &middot; 4:18
+        <span class="quote-tag tag-positive">Feature Win</span>
+      </div>
+    </div>
+
+    <!-- Concerns -->
+    <div class="quote-card concern">
+      <div class="quote-text">"battery usage and overheating testing results would be nice to hear about"</div>
+      <div class="quote-meta">
+        <span class="quote-user">187juggernaut</span> &middot; Keem chat &middot; 56:34
+        <span class="quote-tag tag-concern">Battery Concern</span>
+      </div>
+    </div>
+    <div class="quote-card concern">
+      <div class="quote-text">"How's the battery life though? Do you still get 12 hour streams if you want?"</div>
+      <div class="quote-meta">
+        <span class="quote-user">callmeinfinity</span> &middot; Jake chat &middot; 31:01
+        <span class="quote-tag tag-concern">Endurance</span>
+      </div>
+    </div>
+    <div class="quote-card concern">
+      <div class="quote-text">"Quality is great but idk about the stabilization"</div>
+      <div class="quote-meta">
+        <span class="quote-user">callmeinfinity</span> &middot; Jake chat &middot; 23:39
+        <span class="quote-tag tag-concern">Stabilization</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Top Questions ───────────────────────── -->
+<section class="section" id="questions">
+  <div class="sec-head">
+    <div class="sec-num">06 &mdash; Audience Questions</div>
+    <div class="sec-title">What Viewers Want To Know</div>
+    <div class="sec-desc">Most frequently asked questions, ranked by volume. Each represents a gap in communication or a feature to highlight in marketing.</div>
+  </div>
+
+  <div class="question-list">
+    <div class="q-item">
+      <div class="q-count">1</div>
+      <div>
+        <div class="q-text">How much will the app cost? Subscription or one-time?</div>
+        <div class="q-askers">Asked by: datastick, im_bjam, seku_sama, justfloof, j_dogg619, 187juggernaut, imasneke, 2_bru, nohealv, daanzo + more &middot; 30+ instances</div>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-count">2</div>
+      <div>
+        <div class="q-text">What about battery consumption and phone overheating?</div>
+        <div class="q-askers">Asked by: e_kei, chlomusubi, sevendayz25, 187juggernaut, callmeinfinity &middot; 12+ instances</div>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-count">3</div>
+      <div>
+        <div class="q-text">Is it available on both Android and iPhone?</div>
+        <div class="q-askers">Asked by: datastick, dylanchan94, gokudoriftoeng, starwinpikachu, 2_bru &middot; 10+ instances</div>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-count">4</div>
+      <div>
+        <div class="q-text">Can it connect to OBS? DJI cameras? External cameras via USB-C?</div>
+        <div class="q-askers">Asked by: datastick, markusmyrsky, anthonytr, im_bjam, jayediorr &middot; 8+ instances</div>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-count">5</div>
+      <div>
+        <div class="q-text">Does PIP work on older phones (e.g. iPhone 11)?</div>
+        <div class="q-askers">Asked by: jimster7 (asked 4x), markusmyrsky &middot; Persistent concern</div>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-count">6</div>
+      <div>
+        <div class="q-text">Does it support RTMP/SRT ingests and multi-destination streaming?</div>
+        <div class="q-askers">Asked by: seppanator, markusmyrsky, rinzson, romestylez, r_ch_ &middot; 8+ instances</div>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-count">7</div>
+      <div>
+        <div class="q-text">Will it have a free trial / free tier?</div>
+        <div class="q-askers">Asked by: justfloof, daanzo, longevitous &middot; 5+ instances</div>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-count">8</div>
+      <div>
+        <div class="q-text">Does it work with TVU's existing products (Producer, Anywhere)?</div>
+        <div class="q-askers">Asked by: pjb2says, samsung__sam, r_ch_, cjspyker &middot; 5+ instances</div>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-count">9</div>
+      <div>
+        <div class="q-text">Can the front camera be un-mirrored?</div>
+        <div class="q-askers">Asked by: hostiles_rs, padd_e, ichigo_gyunyu_, msfwebdude, ramp7, longevitous &middot; 8+ instances</div>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-count">10</div>
+      <div>
+        <div class="q-text">When can we download it / when does it launch?</div>
+        <div class="q-askers">Asked by: maxvybz, longevitous, markusmyrsky, starwinpikachu &middot; 6+ instances</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Issues ──────────────────────────────── -->
+<section class="section" id="issues">
+  <div class="sec-head">
+    <div class="sec-num">07 &mdash; Issues Detected</div>
+    <div class="sec-title">Technical &amp; UX Concerns</div>
+    <div class="sec-desc">Issues observed by chat during the live demo, ranked by severity and frequency.</div>
+  </div>
+
+  <div class="issue-list">
+    <div class="issue-row">
+      <div class="issue-severity sev-high">H</div>
+      <div>
+        <div class="issue-title">Visual Glitching / Artifacting (Jake Segment 1)</div>
+        <div class="issue-desc">Jake's first stream segment was severely glitched with visual artifacts. 23% negative sentiment in that segment. Chat described it as "demonic," "schizo," "glitch in the matrix." Audio was fine. Required full stream restart to fix.</div>
+        <div class="issue-source">Source: Jake Chat 1 &middot; 133 msgs &middot; 30 negative &middot; First 2 minutes</div>
+      </div>
+    </div>
+    <div class="issue-row">
+      <div class="issue-severity sev-med">M</div>
+      <div>
+        <div class="issue-title">Camera Mirroring (Front Camera)</div>
+        <div class="issue-desc">Front camera output was mirrored. 8+ viewers flagged it. One viewer provided a workaround ("Settings > Camera > Composition, uncheck mirror front cam"). Should be a toggle in TVU GO settings.</div>
+        <div class="issue-source">Source: Jake Chat 2 &middot; 8 unique mentions</div>
+      </div>
+    </div>
+    <div class="issue-row">
+      <div class="issue-severity sev-med">M</div>
+      <div>
+        <div class="issue-title">Audio Quality Concern (Tessie Mic)</div>
+        <div class="issue-desc">"It just sounds low quality" &mdash; mentioned in later segments. "Tessie mic picks up voice well, it's just got that processed audio quality." Audio quality perception is important for streamer adoption.</div>
+        <div class="issue-source">Source: Keem Chat &middot; 3-4 mentions in hour 2</div>
+      </div>
+    </div>
+    <div class="issue-row">
+      <div class="issue-severity sev-low">L</div>
+      <div>
+        <div class="issue-title">Missing Overlay / Alert for Gifted Subs</div>
+        <div class="issue-desc">"No overlay or alert for gifted subs" &mdash; one viewer noticed lack of alert integration. Alerts and sub notifications are essential for Twitch streamers' monetization flow.</div>
+        <div class="issue-source">Source: Jake Chat 2 &middot; aj_0500 at 10:51</div>
+      </div>
+    </div>
+    <div class="issue-row">
+      <div class="issue-severity sev-med">M</div>
+      <div>
+        <div class="issue-title">App Does NOT Run in Background on iPhone</div>
+        <div class="issue-desc">Confirmed during stream: the app stops when backgrounded. If a phone call comes in or user switches apps, the stream breaks. Multiple viewers flagged this as a dealbreaker for long IRL sessions. BRB screen also froze at "0.5 fps" during app-switch test.</div>
+        <div class="issue-source">Source: Keem Chat &middot; matt2two: "the app does NOT run in the background truly" + BRB freeze test</div>
+      </div>
+    </div>
+    <div class="issue-row">
+      <div class="issue-severity sev-low">L</div>
+      <div>
+        <div class="issue-title">Stabilization Perception (Jake Stream)</div>
+        <div class="issue-desc">"Quality is great but idk about the stabilization" &mdash; one viewer noted stabilization could be better, though most others said "stable" and "very stable." May need software stabilization option.</div>
+        <div class="issue-source">Source: Jake Chat 2 &middot; callmeinfinity at 23:39</div>
+      </div>
+    </div>
+    <div class="issue-row">
+      <div class="issue-severity sev-low">L</div>
+      <div>
+        <div class="issue-title">Beauty Filter Too Aggressive</div>
+        <div class="issue-desc">When demoed, the beauty filter was entertaining but drew criticism: "you look plastic," "it doesn't look good," "super saturated." Filter needs tuning for subtlety. However, it generated strong engagement and entertainment value &mdash; chat loved reacting to it.</div>
+        <div class="issue-source">Source: Both chats &middot; 15+ reactions during demo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Competitive Landscape ────────────────── -->
+<section class="section" id="competitive">
+  <div class="sec-head">
+    <div class="sec-num">08 &mdash; Competitive Intelligence</div>
+    <div class="sec-title">Viewer Comparisons</div>
+    <div class="sec-desc">Products viewers compared TVU GO against &mdash; unprompted. These represent the competitive frame in the audience's mind.</div>
+  </div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-name">Moblin</div>
+      <div class="comp-count">12</div>
+      <div style="font-size:10px;color:var(--text-dim);">mentions</div>
+      <div class="comp-context">"Curious to see how well it holds up against Moblin." Viewers note Moblin's PIP is harder to set up. Feature request: Moblink-style multi-phone bonding.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">IRL Pro</div>
+      <div class="comp-count">4</div>
+      <div style="font-size:10px;color:var(--text-dim);">mentions</div>
+      <div class="comp-context">"PIP on IRL Pro is only in the beta version." TVU GO seen as ahead on PIP implementation.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">LiveU / Solo Pro</div>
+      <div class="comp-count">6</div>
+      <div style="font-size:10px;color:var(--text-dim);">mentions</div>
+      <div class="comp-context">"Will TVU ever release something similar to a LiveU Solo Pro?" TVU GO seen as app-first alternative to hardware encoders.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">TVU Backpack</div>
+      <div class="comp-count">10</div>
+      <div style="font-size:10px;color:var(--text-dim);">mentions</div>
+      <div class="comp-context">"Compare it to their 20K backpack." Viewers see GO as democratizing TVU tech. Some worry about cannibalization.</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">OBS</div>
+      <div class="comp-count">5</div>
+      <div style="font-size:10px;color:var(--text-dim);">mentions</div>
+      <div class="comp-context">"Is there a way to connect it to OBS as a browser source?" Integration requests, not competition. Skeptic: "you can do all this in OBS."</div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">Twitch Mobile</div>
+      <div class="comp-count">3</div>
+      <div style="font-size:10px;color:var(--text-dim);">mentions</div>
+      <div class="comp-context">"People struggle with Twitch mobile app for streaming &mdash; this just might be useful." TVU GO seen as a quality upgrade.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Recommendations ─────────────────────── -->
+<section class="section" id="recs">
+  <div class="sec-head">
+    <div class="sec-num">09 &mdash; Recommendations</div>
+    <div class="sec-title">Actionable Insights</div>
+    <div class="sec-desc">Data-driven recommendations for product, marketing, and go-to-market strategy based on chat analysis.</div>
+  </div>
+
+  <div class="rec-list">
+    <div class="rec-card">
+      <div class="rec-num">1</div>
+      <div>
+        <div class="rec-title">Lead Marketing With PIP + Disconnect Protection</div>
+        <div class="rec-desc">These two features generated the most excitement and are perceived as unique differentiators. PIP was called "clean," "huge," and a "game changer." Disconnect protection was immediately understood as solving a real pain point.</div>
+        <div class="rec-evidence">"Damn the transitions on PiP are so clean" &middot; "so basically no need for rented SRT relays anymore"</div>
+      </div>
+    </div>
+    <div class="rec-card">
+      <div class="rec-num">2</div>
+      <div>
+        <div class="rec-title">Publish Battery &amp; Heat Benchmarks Pre-Launch</div>
+        <div class="rec-desc">Battery life was the #2 most-asked question (12+ instances). Streamers need confidence that 4-8 hour sessions are viable. Publishing real-world battery data across iPhone models will remove a major adoption blocker.</div>
+        <div class="rec-evidence">"battery usage and overheating testing results would be nice to hear about"</div>
+      </div>
+    </div>
+    <div class="rec-card">
+      <div class="rec-num">3</div>
+      <div>
+        <div class="rec-title">Offer a Free Tier or Trial Period</div>
+        <div class="rec-desc">Strong demand for try-before-you-buy. Pricing was the #1 concern. A free tier with basic features (as mentioned: "2 destinations") plus a paid tier for PIP, DR, and multi-stream would follow the Moblin/IRL Pro freemium playbook while capturing more users.</div>
+        <div class="rec-evidence">"A free trial with full app functionality would be nice for people to try streaming" &middot; "there is a free tier w/ 2 destinations"</div>
+      </div>
+    </div>
+    <div class="rec-card">
+      <div class="rec-num">4</div>
+      <div>
+        <div class="rec-title">Fix Mirror Bug + Add In-App Toggle</div>
+        <div class="rec-desc">8+ viewers independently flagged the mirrored front camera. This is a simple but visible issue. Adding an in-app mirror toggle (rather than relying on iOS settings) would eliminate friction and show polish.</div>
+        <div class="rec-evidence">6+ unique users flagged "mirrored" within first 15 minutes of Jake's stream</div>
+      </div>
+    </div>
+    <div class="rec-card">
+      <div class="rec-num">5</div>
+      <div>
+        <div class="rec-title">Prioritize OBS/External Camera Integration</div>
+        <div class="rec-desc">Power users repeatedly asked about connecting DJI cameras, USB-C external cameras, and using GO as a source in OBS. This bridges the gap between phone-only and backpack streamers &mdash; a huge potential market segment.</div>
+        <div class="rec-evidence">"Can you hook up a DJI Action 4 with this app?" &middot; "Is there a way to connect it to OBS as a browser source?"</div>
+      </div>
+    </div>
+    <div class="rec-card">
+      <div class="rec-num">6</div>
+      <div>
+        <div class="rec-title">Pursue 3 Identified Inbound Leads</div>
+        <div class="rec-desc">Three viewers expressed direct beta/partnership interest: (1) <strong>naivety</strong> &mdash; produces for a streamer going to a big international event, wants beta access for stress testing. (2) <strong>rellim</strong> &mdash; "GIMME ACCESS, I'd be down to test in SoCal, I do a lot of IRL." (3) <strong>sahilgoeshard</strong> &mdash; "I work with a content creator with 1M followers." Real-world beta testing = powerful testimonials.</div>
+        <div class="rec-evidence">3 organic inbound leads from a single stream &mdash; high conversion signal</div>
+      </div>
+    </div>
+    <div class="rec-card">
+      <div class="rec-num">7</div>
+      <div>
+        <div class="rec-title">Emphasize "Not a Backpack Replacement" Messaging</div>
+        <div class="rec-desc">Several viewers confused GO with the $20K+ backpack or worried it would cannibalize. Clear positioning: GO is the phone-first entry point; the backpack is for broadcast-grade production. Different tiers, same ecosystem.</div>
+        <div class="rec-evidence">"damn so u gotta pay 30k for the backpack and the app too?" &middot; "ngl overpriced as hell these tvu backpacks"</div>
+      </div>
+    </div>
+    <div class="rec-card">
+      <div class="rec-num">8</div>
+      <div>
+        <div class="rec-title">MrKeem as Primary Ambassador</div>
+        <div class="rec-desc">Keem's demo generated 64% of all TVU-related messages and had 89% positive sentiment. His audience is technically engaged and asked sophisticated questions. A viewer literally said: "Keem explains things so well I'm gonna tell everyone about this app."</div>
+        <div class="rec-evidence">427 unique chatters &middot; 502 TVU mentions &middot; "I'm gonna tell everyone about this app"</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Footer ──────────────────────────────── -->
+<footer>
+  <p><strong>TVU Networks</strong> &middot; GO App Field Day Chat Analysis</p>
+  <p style="margin-top:4px;">Data: 3 Twitch streams &middot; 7,268 messages &middot; 683 unique viewers &middot; February 20, 2026</p>
+  <p style="margin-top:4px; font-size:10px;">Analysis generated from raw Twitch chat CSV exports. Sentiment calculated via keyword matching. All quotes are verbatim viewer messages.</p>
+</footer>
+
+<script>
+// ── Nav ──────────────────────────────────────
+function go(id) { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); }
+const ids = ['hero','streams','sentiment','moments','features','quotes','questions','issues','competitive','recs'];
+const pills = document.querySelectorAll('.nav-pill');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 100;
+  let cur = ids[0];
+  for (const id of ids) {
+    const el = document.getElementById(id);
+    if (el && el.offsetTop <= y) cur = id;
+  }
+  pills.forEach((p, i) => p.classList.toggle('active', ids[i] === cur));
+});
+
+// ── Sentiment Charts ─────────────────────────
+const keemData = {"0":{"pos":0,"neg":0,"total":39},"5":{"pos":6,"neg":1,"total":103},"10":{"pos":21,"neg":0,"total":73},"15":{"pos":27,"neg":0,"total":104},"20":{"pos":24,"neg":1,"total":84},"25":{"pos":17,"neg":0,"total":77},"30":{"pos":15,"neg":0,"total":88},"35":{"pos":14,"neg":0,"total":61},"40":{"pos":19,"neg":2,"total":64},"45":{"pos":16,"neg":1,"total":77},"50":{"pos":20,"neg":0,"total":98},"55":{"pos":12,"neg":2,"total":90},"60":{"pos":16,"neg":0,"total":100},"65":{"pos":1,"neg":0,"total":53},"70":{"pos":5,"neg":1,"total":59},"75":{"pos":7,"neg":1,"total":79},"80":{"pos":11,"neg":2,"total":60},"85":{"pos":3,"neg":1,"total":18}};
+
+const jakeData = {"0":{"pos":9,"neg":2,"total":43},"5":{"pos":11,"neg":1,"total":87},"10":{"pos":8,"neg":1,"total":104},"15":{"pos":6,"neg":0,"total":47},"20":{"pos":8,"neg":0,"total":77},"25":{"pos":3,"neg":0,"total":47},"30":{"pos":2,"neg":1,"total":71},"35":{"pos":23,"neg":0,"total":99},"40":{"pos":4,"neg":2,"total":59},"45":{"pos":12,"neg":1,"total":51},"50":{"pos":0,"neg":1,"total":16},"55":{"pos":0,"neg":0,"total":49},"60":{"pos":0,"neg":0,"total":47},"65":{"pos":1,"neg":1,"total":20},"70":{"pos":3,"neg":0,"total":44},"75":{"pos":5,"neg":5,"total":65},"80":{"pos":11,"neg":0,"total":85},"85":{"pos":6,"neg":0,"total":43}};
+
+function renderChart(containerId, data) {
+  const el = document.getElementById(containerId);
+  const maxTotal = Math.max(...Object.values(data).map(d => d.total));
+
+  for (const [min, d] of Object.entries(data)) {
+    const col = document.createElement('div');
+    col.className = 'chart-col';
+
+    // Stacked: total (gray bg), positive (green), negative (red)
+    const totalH = (d.total / maxTotal) * 100;
+    const posH = (d.pos / maxTotal) * 100;
+    const negH = (d.neg / maxTotal) * 100;
+
+    // Total bar (background)
+    const totalBar = document.createElement('div');
+    totalBar.className = 'chart-bar total';
+    totalBar.style.height = totalH + '%';
+    totalBar.style.position = 'absolute';
+    totalBar.style.bottom = '20px';
+    totalBar.style.left = '0';
+    totalBar.style.right = '0';
+
+    // Positive bar
+    const posBar = document.createElement('div');
+    posBar.className = 'chart-bar pos';
+    posBar.style.height = posH + '%';
+    posBar.style.position = 'absolute';
+    posBar.style.bottom = '20px';
+    posBar.style.left = '15%';
+    posBar.style.right = '50%';
+    posBar.style.zIndex = '2';
+
+    // Negative bar
+    const negBar = document.createElement('div');
+    negBar.className = 'chart-bar neg';
+    negBar.style.height = Math.max(negH, d.neg > 0 ? 2 : 0) + '%';
+    negBar.style.position = 'absolute';
+    negBar.style.bottom = '20px';
+    negBar.style.left = '50%';
+    negBar.style.right = '15%';
+    negBar.style.zIndex = '2';
+
+    const label = document.createElement('div');
+    label.className = 'chart-label';
+    label.textContent = min + 'm';
+    label.style.position = 'absolute';
+    label.style.bottom = '0';
+    label.style.left = '50%';
+    label.style.transform = 'translateX(-50%)';
+
+    col.style.position = 'relative';
+    col.appendChild(totalBar);
+    col.appendChild(posBar);
+    col.appendChild(negBar);
+    col.appendChild(label);
+    el.appendChild(col);
+  }
+}
+
+renderChart('keemChart', keemData);
+renderChart('jakeChart', jakeData);
+
+// ── Animate stat numbers on scroll ───────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.stat-box, .feature-card, .quote-card, .issue-row, .rec-card, .comp-card, .q-item, .moment-card').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(16px)';
+  el.style.transition = 'opacity 400ms ease, transform 400ms ease';
+  observer.observe(el);
+});
+
+// Stagger animations within grids
+document.querySelectorAll('.stat-grid, .feature-grid, .quote-grid, .comp-grid').forEach(grid => {
+  const children = grid.children;
+  for (let i = 0; i < children.length; i++) {
+    children[i].style.transitionDelay = (i * 60) + 'ms';
+  }
+});
+document.querySelectorAll('.issue-list, .rec-list, .question-list').forEach(list => {
+  const children = list.children;
+  for (let i = 0; i < children.length; i++) {
+    children[i].style.transitionDelay = (i * 80) + 'ms';
+  }
+});
+</script>
+</body>
+</html>

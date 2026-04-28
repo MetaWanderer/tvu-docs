@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRORig Camera Kit (Sony FX3/FX30) — Build Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --accent: #2AC93A;
+    --accent-light: rgba(42,201,58,0.08);
+    --accent-border: rgba(42,201,58,0.2);
+    --text: #111827;
+    --text-secondary: #6b7280;
+    --border: #e5e7eb;
+    --bg: #ffffff;
+    --bg-secondary: #f9fafb;
+    --step-bg: #f3f4f6;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ── Header ── */
+  .doc-header {
+    padding: 48px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+  .doc-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--accent-light); border: 1px solid var(--accent-border);
+    color: var(--accent); font-size: 11px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 100px; margin-bottom: 16px;
+  }
+  .doc-title {
+    font-size: 30px; font-weight: 800; letter-spacing: -0.8px;
+    color: var(--text); line-height: 1.2; margin-bottom: 10px;
+  }
+  .doc-subtitle { font-size: 15px; color: var(--text-secondary); margin-bottom: 20px; }
+  .doc-meta {
+    display: flex; gap: 20px; flex-wrap: wrap;
+  }
+  .doc-meta-item {
+    font-size: 12px; color: var(--text-secondary);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .doc-meta-item strong { color: var(--text); }
+
+  /* ── TOC ── */
+  .toc {
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 24px; margin-bottom: 40px;
+  }
+  .toc-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 12px; }
+  .toc ol { padding-left: 16px; }
+  .toc li { margin-bottom: 4px; }
+  .toc a { font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 500; }
+  .toc a:hover { text-decoration: underline; }
+
+  /* ── Parts list ── */
+  .parts-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;
+  }
+  .part-item {
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px 14px;
+    font-size: 13px; color: var(--text);
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .part-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .part-name { font-weight: 500; }
+  .part-note { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* ── Section headers ── */
+  .section {
+    margin-bottom: 48px;
+  }
+  .section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 6px;
+  }
+  .section-title {
+    font-size: 20px; font-weight: 700; letter-spacing: -0.4px;
+    color: var(--text); margin-bottom: 16px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--border);
+  }
+
+  /* ── Steps ── */
+  .steps { display: flex; flex-direction: column; gap: 20px; }
+  .step {
+    display: grid; grid-template-columns: 48px 1fr; gap: 16px;
+    position: relative;
+  }
+  .step::before {
+    content: ''; position: absolute;
+    left: 23px; top: 48px; bottom: -20px; width: 2px;
+    background: var(--border);
+  }
+  .step:last-child::before { display: none; }
+
+  .step-num-wrap { display: flex; flex-direction: column; align-items: center; z-index: 1; }
+  .step-num {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--accent); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 800; flex-shrink: 0;
+    font-family: 'Inter', sans-serif;
+  }
+  .step-body { padding-bottom: 8px; }
+  .step-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; padding-top: 11px; }
+  .step-desc { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; }
+  .step-actions { display: flex; flex-direction: column; gap: 8px; }
+  .step-action {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 14px;
+    font-size: 13px; color: var(--text);
+  }
+  .step-action-num {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--border); color: var(--text-secondary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+  }
+  .img-placeholder {
+    background: var(--bg-secondary); border: 2px dashed var(--border);
+    border-radius: var(--radius-sm); padding: 32px;
+    text-align: center; color: var(--text-secondary);
+    font-size: 12px; margin-top: 12px;
+  }
+  .img-placeholder-icon { font-size: 28px; margin-bottom: 6px; }
+
+  /* ── Settings ── */
+  .settings-list { display: flex; flex-direction: column; gap: 12px; }
+  .setting-item {
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px 16px;
+  }
+  .setting-path {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+    color: var(--text-secondary); margin-bottom: 4px;
+    font-family: monospace;
+  }
+  .setting-path span { color: var(--accent); }
+  .setting-label { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .setting-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.55; }
+  .setting-value {
+    display: inline-flex; margin-top: 6px;
+    background: var(--accent-light); border: 1px solid var(--accent-border);
+    color: var(--accent); font-size: 11px; font-weight: 700;
+    padding: 2px 10px; border-radius: 100px;
+  }
+
+  /* ── Callouts ── */
+  .callout {
+    border-radius: var(--radius-sm); padding: 14px 16px;
+    font-size: 13px; margin-top: 10px; display: flex; gap: 10px;
+  }
+  .callout.tip { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+  .callout.warning { background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; }
+  .callout.info { background: var(--accent-light); border: 1px solid var(--accent-border); color: #166534; }
+  .callout-icon { flex-shrink: 0; font-size: 15px; }
+
+  /* ── Config cards ── */
+  .config-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .config-card {
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 16px;
+  }
+  .config-title { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .config-desc { font-size: 12px; color: var(--text-secondary); }
+
+  /* ── Troubleshooting ── */
+  .trouble-list { display: flex; flex-direction: column; gap: 12px; }
+  .trouble-item {
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  .trouble-q {
+    background: var(--bg-secondary); padding: 12px 16px;
+    font-size: 13px; font-weight: 600; color: var(--text);
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .trouble-a {
+    padding: 12px 16px;
+    font-size: 13px; color: var(--text-secondary);
+  }
+
+  /* ── Footer ── */
+  .doc-footer {
+    border-top: 1px solid var(--border); padding: 24px 0 0;
+    margin-top: 48px; font-size: 12px; color: var(--text-secondary);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+  }
+  .contact-link { color: var(--accent); text-decoration: none; font-weight: 500; }
+
+  @media (max-width: 600px) {
+    .parts-grid, .config-grid { grid-template-columns: 1fr; }
+    .doc-title { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="doc-header">
+  <div class="doc-badge">📷 Build Guide</div>
+  <div class="doc-title">PRORig Camera Kit<br>Sony FX3 / FX30</div>
+  <div class="doc-subtitle">Complete assembly, configuration, and settings guide for IRL livestreaming</div>
+  <div class="doc-meta">
+    <div class="doc-meta-item">📦 <strong>Kit:</strong> PRORig Camera Kit</div>
+    <div class="doc-meta-item">📷 <strong>Compatible:</strong> Sony FX3 · Sony FX30</div>
+    <div class="doc-meta-item">⏱ <strong>Setup time:</strong> ~30 minutes</div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#parts">Parts List</a></li>
+    <li><a href="#assembly">Step-by-Step Assembly</a></li>
+    <li><a href="#camera-settings">Camera Settings</a></li>
+    <li><a href="#mic-settings">DJI Mic 2 Settings</a></li>
+    <li><a href="#configurations">Recommended Configurations</a></li>
+    <li><a href="#troubleshooting">Troubleshooting & Tips</a></li>
+  </ol>
+</div>
+
+<!-- HERO IMAGE -->
+<div style="margin-bottom:40px;">
+  <img src="https://support.unlimitedirl.com/images/fx3-30.webp" alt="Assembled PRORig Sony FX3/FX30" style="width:100%;border-radius:12px;border:1px solid var(--border);">
+</div>
+
+<!-- PARTS LIST -->
+<div class="section" id="parts">
+  <div class="section-label">Before You Start</div>
+  <div class="section-title">Parts List</div>
+  <div class="parts-grid">
+    <div class="part-item"><div class="part-icon">📷</div><div><div class="part-name">Camera Body</div><div class="part-note">Sony FX3 or Sony FX30</div></div></div>
+    <div class="part-item"><div class="part-icon">🔭</div><div><div class="part-name">Lens</div><div class="part-note">FX3: Sony FE 16-35mm f/2.8 GM II · FX30: Sony E 11mm f/1.8</div></div></div>
+    <div class="part-item"><div class="part-icon">🔵</div><div><div class="part-name">UV Filter</div><div class="part-note">K&F Concept Nano X-Series UV Filter</div></div></div>
+    <div class="part-item"><div class="part-icon">🔲</div><div><div class="part-name">Cage Kit</div><div class="part-note">SmallRig FX3/FX30 Camera Cage Kit</div></div></div>
+    <div class="part-item"><div class="part-icon">✋</div><div><div class="part-name">Handles</div><div class="part-note">SmallRig Side Handle + Top Handle (with locating pins)</div></div></div>
+    <div class="part-item"><div class="part-icon">🎙</div><div><div class="part-name">Audio System</div><div class="part-note">DJI Mic 2 (2 TX + 1 RX) + Camera Adapter</div></div></div>
+    <div class="part-item"><div class="part-icon">🔋</div><div><div class="part-name">Power System</div><div class="part-note">SmallRig V-Mount Battery Plate + VB50 + USB-C Right-Angled Cable (22cm)</div></div></div>
+    <div class="part-item"><div class="part-icon">📐</div><div><div class="part-name">Tripod (Optional)</div><div class="part-note">SmallRig VT-20 Aluminum Mini Tripod</div></div></div>
+  </div>
+</div>
+
+<!-- ASSEMBLY -->
+<div class="section" id="assembly">
+  <div class="section-label">Assembly</div>
+  <div class="section-title">Step-by-Step Assembly</div>
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num-wrap"><div class="step-num">1</div></div>
+      <div class="step-body">
+        <div class="step-title">Mount the Cage</div>
+        <div class="step-desc">Attach the SmallRig Cage to the camera body and install the cable clamps.</div>
+        <div class="step-actions">
+          <div class="step-action"><div class="step-action-num">a</div>Attach the SmallRig FX3/FX30 Cage to the camera body, securing with 3 screws — 1 on the left, 1 on the right, 1 on the underside.</div>
+          <div class="step-action"><div class="step-action-num">b</div>Install the top rail onto the camera body using 2 screws. Make sure the hot shoe port is not covered.</div>
+          <div class="step-action"><div class="step-action-num">c</div>Install the SmallRig HDMI Cable Clamp onto the side of the camera body.</div>
+          <div class="step-action"><div class="step-action-num">d</div>Install the SmallRig USB-C & Multi Cable Clamp onto the side of the camera body.</div>
+        </div>
+        <div class="img-placeholder"><div class="img-placeholder-icon">📸</div>Screenshot — Cage attached with screws and cable clamps installed</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-wrap"><div class="step-num">2</div></div>
+      <div class="step-body">
+        <div class="step-title">Attach Hand Strap & Handles</div>
+        <div class="step-desc">Add the hand strap and handles for ergonomic grip and maneuverability.</div>
+        <div class="step-actions">
+          <div class="step-action"><div class="step-action-num">a</div>Attach the SmallRig Hand Strap to improve stability and prevent dropping during streaming.</div>
+          <div class="step-action"><div class="step-action-num">b</div>Attach the SmallRig Side Handle using the locating pins for a secure grip.</div>
+          <div class="step-action"><div class="step-action-num">c</div>Attach the SmallRig Top Handle using the locating pins for enhanced maneuverability.</div>
+        </div>
+        <div class="callout tip"><div class="callout-icon">💡</div>Both handles can be added or removed as needed depending on the stream and accessories.</div>
+        <div class="img-placeholder"><div class="img-placeholder-icon">📸</div>Screenshot — Side handle and top handle attached with locating pins</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-wrap"><div class="step-num">3</div></div>
+      <div class="step-body">
+        <div class="step-title">Install Lens & UV Filter</div>
+        <div class="step-desc">Mount the lens to the camera body and attach the UV filter for lens protection.</div>
+        <div class="step-actions">
+          <div class="step-action"><div class="step-action-num">a</div>Work quickly in a dust-free location. Remove the body cap and the rear lens cap from the lens.</div>
+          <div class="step-action"><div class="step-action-num">b</div>Align the two white index marks on the lens and camera. Hold with the lens mount facing down to prevent dust from entering.</div>
+          <div class="step-action"><div class="step-action-num">c</div>Push the lens lightly toward the camera and turn slowly in the arrow direction until it clicks into the locked position.</div>
+          <div class="step-action"><div class="step-action-num">d</div>Remove the front lens cap and screw on the K&F Concept Nano X-Series UV Filter. Re-install the lens cap over the filter.</div>
+        </div>
+        <div class="callout warning"><div class="callout-icon">⚠️</div>Always mount and remove the lens quickly in a clean environment to prevent dust from entering the sensor.</div>
+        <div class="img-placeholder"><div class="img-placeholder-icon">📸</div>Screenshot — Lens aligned on white index mark, UV filter attached</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-wrap"><div class="step-num">4</div></div>
+      <div class="step-body">
+        <div class="step-title">Set Up the DJI Mic 2 Audio System</div>
+        <div class="step-desc">Slide the receiver onto the camera hot shoe — transmitters auto-pair.</div>
+        <div class="step-actions">
+          <div class="step-action"><div class="step-action-num">a</div>Slide the DJI Mic 2 Camera Adapter into the hot shoe port on top of the camera.</div>
+          <div class="step-action"><div class="step-action-num">b</div>Connect the DJI Mic 2 receiver by sliding it down onto the Camera Adapter where the flat golden pins line up.</div>
+        </div>
+        <div class="callout info"><div class="callout-icon">✅</div>The transmitters are auto-paired with the receiver. The Sony camera will automatically switch to wireless mic audio when the adapter is connected.</div>
+        <div class="img-placeholder"><div class="img-placeholder-icon">📸</div>Screenshot — DJI Mic 2 receiver seated on hot shoe adapter</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-wrap"><div class="step-num">5</div></div>
+      <div class="step-body">
+        <div class="step-title">Power the Rig</div>
+        <div class="step-desc">Install both the internal battery and the external V-Mount battery system.</div>
+        <div class="step-actions">
+          <div class="step-action"><div class="step-action-num">a</div>Insert the Sony NP-FZ100 battery into the compartment on the underside of the camera.</div>
+          <div class="step-action"><div class="step-action-num">b</div>Attach the SmallRig V-Mount Battery Plate to the underside of the camera cage.</div>
+          <div class="step-action"><div class="step-action-num">c</div>Slide the SmallRig VB50 battery into the Battery Plate.</div>
+          <div class="step-action"><div class="step-action-num">d</div>Connect the VB50 to the camera's USB-C port via the USB-C Right-Angled Charging Cable (22cm).</div>
+        </div>
+        <div class="callout tip"><div class="callout-icon">💡</div>The VB50 supports hot-swapping. Larger capacity models (VB99, VB212) are also compatible.</div>
+        <div class="img-placeholder"><div class="img-placeholder-icon">📸</div>Screenshot — V-Mount battery plate attached, USB-C cable connected</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-wrap"><div class="step-num">6</div></div>
+      <div class="step-body">
+        <div class="step-title">Mount on Tripod (Optional)</div>
+        <div class="step-desc">Use the Arca-Swiss quick release system to mount to the SmallRig VT-20.</div>
+        <div class="step-actions">
+          <div class="step-action"><div class="step-action-num">a</div>Attach the tripod quick release plate to the underside of the Battery Plate using the 1/4" screw. Tighten firmly.</div>
+          <div class="step-action"><div class="step-action-num">b</div>Slide the rig onto the SmallRig VT-20 Aluminum Mini Tripod using the Arca-Swiss rail to lock it in place.</div>
+        </div>
+        <div class="img-placeholder"><div class="img-placeholder-icon">📸</div>Screenshot — Rig mounted on VT-20 tripod via quick release plate</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CAMERA SETTINGS -->
+<div class="section" id="camera-settings">
+  <div class="section-label">Configuration</div>
+  <div class="section-title">Camera Settings</div>
+  <p style="font-size:14px;color:var(--text-secondary);margin-bottom:20px;">Press the physical <strong>MODE</strong> button → rotate the wheel or use the touchscreen → set to <strong>Movie mode</strong> before adjusting these settings.</p>
+  <div class="settings-list">
+
+    <div class="setting-item">
+      <div class="setting-path">Setup › Area/Date › <span>NTSC/PAL Selector</span></div>
+      <div class="setting-label">Set Region to NTSC</div>
+      <div class="setting-desc">Cameras purchased in Europe default to PAL (25/50fps). Switch to NTSC to enable 30fps and 60fps frame rates.</div>
+      <div class="setting-value">Set to: NTSC</div>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-path">Setup › Power Setting Option › <span>Power Save Start Time</span></div>
+      <div class="setting-label">Disable Power Save</div>
+      <div class="setting-desc">Prevent the camera from sleeping during long streaming sessions.</div>
+      <div class="setting-value">Power Save Start Time → Off</div>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-path">Setup › Power Setting Option › <span>Auto Power OFF Temp</span></div>
+      <div class="setting-label">Set Overheating Threshold to High</div>
+      <div class="setting-desc">Prevents the camera from shutting down during extended streams.</div>
+      <div class="setting-value">Auto Power OFF Temp → High</div>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-path">Setup › External Output › <span>HDMI Info. Display</span></div>
+      <div class="setting-label">Disable HDMI Info Display</div>
+      <div class="setting-desc">Turns off on-screen overlays so your HDMI output is a clean video signal with no menus visible.</div>
+      <div class="setting-value">HDMI Info. Display → Off</div>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-path">Setup › External Output › <span>CTRL FOR HDMI</span></div>
+      <div class="setting-label">Disable HDMI Control</div>
+      <div class="setting-value">CTRL FOR HDMI → Off</div>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-path">Shooting › Image Stabilization › <span>SteadyShot</span></div>
+      <div class="setting-label">Image Stabilization Mode</div>
+      <div class="setting-desc"><strong>Standard</strong> — Moderate stabilization, minimal image crop. Best for general handheld use.<br><strong>Active</strong> — Stronger stabilization with slight crop. Best for walking shots or dynamic movement.</div>
+      <div class="setting-value">SteadyShot Adjust → Auto</div>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-path">Shooting › Zoom › <span>Zoom Range</span></div>
+      <div class="setting-label">Enable Clear Image Zoom</div>
+      <div class="setting-desc">Extends zoom beyond the optical range while maintaining image quality. Useful for prime lenses. Use the Zoom Lever (W/T) to zoom.</div>
+      <div class="setting-value">Zoom Range → Clear Image Zoom</div>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-path">Shooting › Shooting Mode › <span>Exposure Ctrl Type</span></div>
+      <div class="setting-label">Set Exposure Control Mode</div>
+      <div class="setting-desc">Change to <strong>P/A/S/M Mode</strong> first. Then set Exposure Mode to <strong>Shutter Priority</strong> for most streams — locks in consistent motion while camera adjusts aperture and ISO.</div>
+      <div class="setting-value">Exposure Ctrl Type → P/A/S/M</div>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-path">Main › Main1 › <span>Rec Frame Rate</span></div>
+      <div class="setting-label">Frame Rate & Shutter Speed</div>
+      <div class="setting-desc">
+        Set frame rate to <strong>59.94p</strong> or <strong>29.97p</strong> (or 23.98p for a filmic look).<br>
+        Set shutter speed to <strong>double your frame rate</strong>:<br>
+        &nbsp;• 59.94p → 1/125<br>
+        &nbsp;• 29.97p → 1/60<br>
+        Set ISO to <strong>ISO Auto</strong>. Set Picture Profile to <strong>PPOFF</strong>.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MIC SETTINGS -->
+<div class="section" id="mic-settings">
+  <div class="section-label">Audio</div>
+  <div class="section-title">DJI Mic 2 Settings</div>
+  <p style="font-size:14px;color:var(--text-secondary);margin-bottom:20px;">Turn on the receiver → swipe down on the screen to access settings.</p>
+  <div class="settings-list">
+
+    <div class="setting-item">
+      <div class="setting-path">Receiver Settings › <span>Recommended Camera Settings</span></div>
+      <div class="setting-label">Set Camera Brand & Model</div>
+      <div class="setting-desc">Select <strong>Brand: Sony</strong> then select your model (<strong>FX3</strong> or <strong>FX30</strong>). Swipe up to exit.</div>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-path">Receiver Settings › <span>Power On/Off Camera Simultaneously</span></div>
+      <div class="setting-label">Enable Camera Power Sync</div>
+      <div class="setting-desc">When enabled, the receiver and transmitters power on/off with the camera — saves battery and simplifies your workflow.</div>
+      <div class="setting-value">Set to: On</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CONFIGURATIONS -->
+<div class="section" id="configurations">
+  <div class="section-label">Use Cases</div>
+  <div class="section-title">Recommended Configurations</div>
+  <div class="config-grid">
+    <div class="config-card">
+      <div class="config-title">✋ Handheld</div>
+      <div class="config-desc">Use Side Handle + Top Handle for a balanced, ergonomic grip on the move.</div>
+    </div>
+    <div class="config-card">
+      <div class="config-title">📐 Tripod</div>
+      <div class="config-desc">Mount on SmallRig VT-20 via Arca-Swiss quick release for static shots.</div>
+    </div>
+    <div class="config-card">
+      <div class="config-title">🪶 Lightweight</div>
+      <div class="config-desc">Remove cage and handles. Internal battery only — 2–3 hours runtime.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TROUBLESHOOTING -->
+<div class="section" id="troubleshooting">
+  <div class="section-label">Help</div>
+  <div class="section-title">Troubleshooting & Tips</div>
+  <div class="trouble-list">
+
+    <div class="trouble-item">
+      <div class="trouble-q">📺 How do I fold out the camera display?</div>
+      <div class="trouble-a">Loosen the silver thumb screw on the Battery Plate to lower the V-Mount Battery to horizontal. Fold out and rotate the touchscreen. Raise the battery back up and re-tighten. Reverse this when ending your stream to protect the display.</div>
+    </div>
+
+    <div class="trouble-item">
+      <div class="trouble-q">🔩 Handle or accessory feels loose</div>
+      <div class="trouble-a">Ensure all screws are fully tightened. A hex key may be required for some connections.</div>
+    </div>
+
+    <div class="trouble-item">
+      <div class="trouble-q">🔋 Battery life management</div>
+      <div class="trouble-a">Keep spare V-Mount batteries charged between shoots. The VB99 and VB212 offer higher capacity and are fully compatible with the Battery Plate.</div>
+    </div>
+
+    <div class="trouble-item">
+      <div class="trouble-q">🔌 HDMI cable wear</div>
+      <div class="trouble-a">HDMI cables need periodic replacement. Always carry spares. Use the SmallRig HDMI Clamp to reduce stress on the camera port and extend cable life.</div>
+    </div>
+
+    <div class="trouble-item">
+      <div class="trouble-q">🔭 Lens maintenance</div>
+      <div class="trouble-a">Regularly use the K&F Concept Lens Cleaning Pen to maintain optical clarity. Clean in a circular motion from center outward.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="doc-footer">
+  <div>TVU Networks — IRL Producer Support</div>
+  <div>Questions? <a href="mailto:slozano@tvunetworks.com" class="contact-link">slozano@tvunetworks.com</a></div>
+</div>
+
+</body>
+</html>
