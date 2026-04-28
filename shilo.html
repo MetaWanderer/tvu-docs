@@ -523,6 +523,7 @@
   <div class="sec-head">
     <div class="sec-num">Schedule</div>
     <div class="sec-title">Shoot Day Timeline</div>
+    <div style="font-size:11px;color:var(--text-dim);margin-top:6px;">Times in <span id="tzBadge" style="color:var(--text-sec);font-weight:700;">ET</span> &mdash; Miami shoot</div>
   </div>
 
   <div class="timeline">
@@ -536,7 +537,7 @@
           <span class="now-badge">NOW</span>
           <span class="tl-tag setup-tag">CREW CALL</span>
           <div class="tl-name">Tech Check &amp; Setup</div>
-          <div class="tl-desc">Put the pack in Shilo's hands. Walk through setup. Show him TVU GO mobile as a backup — impromptu live option when he doesn't have his full rig.</div>
+          <div class="tl-desc">Put the pack in Shilo's hands. Walk through setup. Show him the TVU GO app as a backup option — lets him go live from his phone if he doesn't have his full rig.</div>
           <div class="tl-badges"><span class="tl-badge badge-tbd">Maybe Stream</span></div>
         </div>
       </div>
@@ -657,7 +658,7 @@
           <span class="now-badge">NOW</span>
           <span class="tl-tag tennis-tag">SEGMENT 3 &mdash; TABLE TENNIS</span>
           <div class="tl-name">Broward Table Tennis Club &mdash; The Bulk of the Day</div>
-          <div class="tl-desc">Shilo's passion for TT — challenge a club regular, talk trash, chat predicts outcomes. React on stream to old footage of him playing as a kid. Possible second feed via GO for both sides of the table. Bring in a surprise guest.</div>
+          <div class="tl-desc">Shilo's passion for TT — challenge a club regular, talk trash, chat predicts outcomes. React on stream to old footage of him playing as a kid. Possible second feed via TVU GO app for both sides of the table. Bring in a surprise guest.</div>
           <div class="tl-addr">
             <svg class="tl-addr-pin" width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" fill="currentColor"/></svg>
             <span class="tl-addr-text">3371 N University Dr, Hollywood, FL 33024</span>
@@ -795,7 +796,7 @@
         <li>Chat predicts outcomes, votes on matchups</li>
         <li>Bring in a surprise guest to play</li>
         <li>React on stream to old footage of him playing as a kid</li>
-        <li>Second camera angle via GO — capture both sides of the table</li>
+        <li>Second camera angle via TVU GO app — capture both sides of the table</li>
       </ul>
       <div class="story-goal">Show the side of Shilo his audience doesn't see — IRL lets you share who you are beyond what you're known for</div>
     </div>
@@ -943,7 +944,7 @@
       <li><strong>Frame for vertical</strong> &mdash; center subjects for 9:16 crop-ability</li>
       <li><strong>Capture stream POV</strong> &mdash; phone screens, chat reactions, TVU pack UI, pack setup</li>
       <li><strong>Gym specifics</strong> &mdash; murals, car, neon lights, equipment. Shoot the vibe.</li>
-      <li><strong>Table tennis</strong> &mdash; both sides of the table if second angle available via GO</li>
+      <li><strong>Table tennis</strong> &mdash; both sides of the table if second angle available via TVU GO app</li>
       <li><strong>Drive segments</strong> &mdash; pull from the stream + get window reflections, speed, city blur</li>
     </ul>
   </div>
@@ -992,7 +993,7 @@
           <li>Going Live with TVU &mdash; setup, ease of use, battery swap</li>
           <li>Flexibility &mdash; gym, restaurant, car, long distance, you stay live</li>
           <li>Share Your Passion &mdash; athlete by trade, TT by passion, chat integration</li>
-          <li>Shilo's introduction to TVU Pack + second feed at table tennis via GO</li>
+          <li>Shilo's introduction to TVU Pack + second feed at table tennis via TVU GO app</li>
         </ul>
       </div>
     </div>
@@ -1032,6 +1033,33 @@ function copyText(btn, text) {
 }
 function copyAddr(btn, addr) { copyText(btn, addr); }
 
+function convertTimesToLocal() {
+  const localTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  // Get short timezone label (e.g. "PDT", "CDT", "BST")
+  const tzLabel = new Date(Date.UTC(SHOOT_DATE[0], SHOOT_DATE[1], SHOOT_DATE[2], 14, 0, 0))
+    .toLocaleTimeString('en-US', { timeZoneName: 'short', timeZone: localTZ })
+    .split(' ').pop();
+
+  // Update timezone badge in schedule header
+  const badge = document.getElementById('tzBadge');
+  if (badge) badge.textContent = tzLabel;
+
+  // Convert each block's time label
+  document.querySelectorAll('.tl-block').forEach(block => {
+    const startStr = block.getAttribute('data-start');
+    if (!startStr) return;
+    const [h, m] = startStr.split(':').map(Number);
+    const utcMs = Date.UTC(SHOOT_DATE[0], SHOOT_DATE[1], SHOOT_DATE[2], h + ET_OFFSET, m, 0);
+    const localStr = new Date(utcMs).toLocaleTimeString('en-US', {
+      hour: 'numeric', minute: '2-digit', hour12: true, timeZone: localTZ
+    });
+    // Format: "10:30 AM" → "10:30a", "7:30 AM" → "7:30a"
+    const formatted = localStr.replace(' AM', 'a').replace(' PM', 'p');
+    const timeEl = block.querySelector('.tl-time');
+    if (timeEl) timeEl.textContent = formatted;
+  });
+}
+
 // ── UPDATE THIS when shoot date is confirmed ──────────────
 // Shoot times in ET (EDT = UTC-4 in May/June)
 // Example below: May 14, 2026 — replace month (4=May), day (14), and UTC offset (+4 for EDT)
@@ -1041,7 +1069,7 @@ const SHOOT_START = Date.UTC(SHOOT_DATE[0], SHOOT_DATE[1], SHOOT_DATE[2], 10 + E
 const SHOOT_END   = Date.UTC(SHOOT_DATE[0], SHOOT_DATE[1], SHOOT_DATE[2], 17 + ET_OFFSET,  0, 0); // 5:00 PM ET
 
 const SCHEDULE = [
-  { start: 10.5,  end: 11,    label: 'Crew Call + Tech Check — Put GO in Shilo\'s hands' },
+  { start: 10.5,  end: 11,    label: 'Crew Call + Tech Check — Pack setup + TVU GO app walkthrough' },
   { start: 11,    end: 11.5,  label: 'Segment 1 — Bacon Bitch: Brunch live stream' },
   { start: 11.5,  end: 11.75, label: 'Segment 1B — Drive to BOXR Gym (battery swap)' },
   { start: 11.75, end: 13.25, label: 'Segment 2 — BOXR Gym: Shilo\'s workout live' },
@@ -1126,6 +1154,7 @@ window.addEventListener('scroll', () => {
   pills.forEach((p,i) => p.classList.toggle('active', ids[i] === cur));
 });
 
+convertTimesToLocal();
 updateCountdown();
 updateNowText();
 updateHighlight();
