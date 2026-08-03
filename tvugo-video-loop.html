@@ -1,0 +1,76 @@
+<meta charset="utf-8">
+<title>Video Loop Source</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+    cursor: none;
+  }
+  #video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;   /* fill 1920x1080 edge to edge */
+    background: #000;
+  }
+  #start {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    color: #fff;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size: 22px;
+    letter-spacing: .5px;
+    cursor: pointer;
+    z-index: 10;
+  }
+  #start.hidden { display: none; }
+</style>
+
+<video id="video"
+       src="tvugo-video-loop.mp4"
+       loop
+       playsinline
+       preload="auto"></video>
+
+<div id="start">Click anywhere to start (with sound)</div>
+
+<script>
+  const video = document.getElementById('video');
+  const start = document.getElementById('start');
+
+  // Try to autoplay with sound. Browsers usually block sound-on autoplay,
+  // so if it fails we fall back to a one-click start overlay.
+  async function tryPlay() {
+    video.muted = false;
+    try {
+      await video.play();
+      start.classList.add('hidden');
+    } catch (e) {
+      start.classList.remove('hidden');
+    }
+  }
+
+  start.addEventListener('click', async () => {
+    video.muted = false;
+    try { await video.play(); } catch (e) {}
+    start.classList.add('hidden');
+  });
+
+  // Belt-and-suspenders: keep it looping forever even if 'loop' hiccups.
+  video.addEventListener('ended', () => {
+    video.currentTime = 0;
+    video.play();
+  });
+
+  tryPlay();
+</script>
