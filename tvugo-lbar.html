@@ -10,7 +10,7 @@
   URL options:
     ?msg=DON'T MOVE.|TAKING THIS STREAM OUTSIDE.   white part | green part
     ?tag=UP NEXT                                    small pill before the line
-    ?glass=0.5                                      panel darkness, 0 (clear) to 1 (solid). Default 0.5
+    ?glass=0.5                                      panel darkness, 0 (clear) to 1 (solid). Default 0.32
     ?delay=2                                        wait this many seconds before animating on
     ?demo=1                                         show a stand-in picture under the overlay
   Animates on each time the source loads. Refresh the browser source to replay it.
@@ -18,7 +18,7 @@
 -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  :root { --green:#2AC93A; --bright:#33E233; --g:.5; }
+  :root { --green:#2AC93A; --bright:#33E233; --g:.32; }
   * { box-sizing:border-box; margin:0; padding:0; }
   html,body { width:100%; height:100%; overflow:hidden; background:transparent; }
   #stage { --d:0s; position:absolute; left:0; top:0; width:1920px; height:1080px; transform-origin:0 0;
@@ -35,7 +35,7 @@
 
   /* right panel: darker at the screen edge, fading toward the video */
   #side { position:absolute; right:0; top:0; width:292px; height:960px;
-    background:linear-gradient(to left, rgba(4,6,8,calc(var(--g) + .28)) 0%, rgba(4,6,8,var(--g)) 60%, rgba(4,6,8,calc(var(--g) - .12)) 100%);
+    background:linear-gradient(to left, rgba(4,6,8,calc(var(--g) + .2)) 0%, rgba(4,6,8,var(--g)) 60%, rgba(4,6,8,calc(var(--g) - .12)) 100%);
     display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 22px; text-align:center;
     text-shadow:0 2px 10px rgba(0,0,0,.75); }
   /* glowing neon edges */
@@ -61,7 +61,7 @@
   /* bottom bar */
   #bar { position:absolute; left:0; bottom:0; width:1920px; height:120px; display:flex; }
   #msg { position:relative; width:1628px; height:100%; padding:0 44px; display:flex; align-items:center; gap:26px; overflow:hidden;
-    background:linear-gradient(to top, rgba(4,6,8,calc(var(--g) + .28)) 0%, rgba(4,6,8,var(--g)) 60%, rgba(4,6,8,calc(var(--g) - .12)) 100%);
+    background:linear-gradient(to top, rgba(4,6,8,calc(var(--g) + .2)) 0%, rgba(4,6,8,var(--g)) 60%, rgba(4,6,8,calc(var(--g) - .12)) 100%);
     text-shadow:0 2px 10px rgba(0,0,0,.75); }
   #bar::before { content:""; position:absolute; left:0; right:0; top:0; height:4px; background:var(--bright); z-index:2;
     box-shadow:0 0 22px 4px rgba(51,226,51,.95), 0 0 80px 14px rgba(51,226,51,.6);
